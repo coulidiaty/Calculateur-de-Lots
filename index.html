@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Position Size Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F7F8FA;
+    --surface: #FFFFFF;
+    --surface-elevated: #FFFFFF;
+    --accent: #3D5AFE;
+    --accent-pressed: #2E45D1;
+    --text-primary: #111418;
+    --text-secondary: #6B7280;
+    --text-disabled: #C1C5CC;
+    --border: #E4E7EC;
+    --success: #1BA672;
+    --error: #E5484D;
+    --warning: #F2A93B;
+    --success-bg: #E8F7F1;
+    --error-bg: #FDEAEA;
+    --warning-bg: #FDF3E3;
+    --radius-card: 12px;
+    --radius-input: 8px;
+    --radius-pill: 999px;
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body{
+    margin:0; padding:0; height:100%;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body{
+    overscroll-behavior-y: contain;
+  }
+
+  .tabular{
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  #app{
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .screen{
+    display: none;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 0 20px 24px;
+    animation: fadeSlide .22s ease;
+  }
+  .screen.active{ display: flex; }
+
+  @keyframes fadeSlide{
+    from{ opacity: 0; transform: translateX(10px); }
+    to{ opacity: 1; transform: translateX(0); }
+  }
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    min-height: 56px;
+    padding-top: 8px;
+  }
+
+  .back-btn{
+    width:48px; height:48px;
+    display:flex; align-items:center; justify-content:center;
+    background: none; border: none;
+    color: var(--text-primary);
+    border-radius: var(--radius-input);
+    cursor:pointer;
+  }
+  .back-btn:active{ background: var(--border); }
+  .back-btn svg{ width:22px; height:22px; }
+
+  .step-indicator{
+    margin-left: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .screen-header{
+    margin-top: 8px;
+    margin-bottom: 24px;
+  }
+
+  h1.screen-title{
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    line-height: 1.25;
+  }
+
+  p.screen-subtitle{
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .content{
+    flex: 1;
+    display:flex;
+    flex-direction: column;
+  }
+
+  .spacer{ flex: 1; }
+
+  .bottom-actions{
+    padding-top: 24px;
+  }
+
+  /* Asset grid */
+  .asset-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .asset-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    min-height: 88px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .asset-card:active{ background: #F0F1F5; }
+  .asset-card.selected{
+    border-color: var(--accent);
+    background: #EEF1FF;
+  }
+  .asset-symbol{
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .asset-label{
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .asset-card.selected .asset-label{ color: var(--accent); }
+
+  /* Field */
+  .field{
+    margin-bottom: 16px;
+  }
+  .field-label{
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    display:block;
+  }
+  .input-wrap{
+    position: relative;
+  }
+  .prefix{
+    position:absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 16px;
+    font-weight: 500;
+    pointer-events:none;
+  }
+  input[type="text"], input[type="number"]{
+    width: 100%;
+    height: 56px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    padding: 0 16px;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color .15s ease;
+  }
+  input.has-prefix{ padding-left: 32px; }
+  input:focus{ border-color: var(--accent); }
+  input.input-error{ border-color: var(--error); }
+  input::placeholder{ color: var(--text-disabled); }
+
+  /* Switch (pill toggle) */
+  .switch-row{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    margin-bottom: 24px;
+    min-height: 48px;
+  }
+  .switch-option{
+    flex: 1;
+    text-align:center;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 8px;
+    border-radius: var(--radius-pill);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+    user-select: none;
+  }
+  .switch-option.active{
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* Preset buttons (risk %) */
+  .preset-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .preset-btn{
+    min-height: 48px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    font-size: 16px;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+  }
+  .preset-btn.selected{
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .divider-label{
+    text-align:center;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 16px 0 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  /* Primary button */
+  .btn-primary{
+    width: 100%;
+    min-height: 56px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-card);
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  .btn-primary:active{ background: var(--accent-pressed); }
+  .btn-primary:disabled{
+    background: var(--text-disabled);
+    cursor: not-allowed;
+  }
+
+  .btn-secondary{
+    width: 100%;
+    min-height: 48px;
+    background: transparent;
+    color: var(--accent);
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  /* Banner (error/warning/success) */
+  .banner{
+    display:flex;
+    align-items:flex-start;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: var(--radius-input);
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+  .banner.error{ background: var(--error-bg); color: var(--error); }
+  .banner.warning{ background: var(--warning-bg); color: #8a5a13; }
+  .banner.success{ background: var(--success-bg); color: var(--success); }
+  .banner svg{ flex-shrink:0; width:18px; height:18px; margin-top:1px; }
+
+  /* Result screen */
+  .result-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 24px 16px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .result-label{
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .result-value{
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text-primary);
+  }
+  .result-unit{
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-left: 4px;
+  }
+
+  .detail-row{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    margin-bottom: 8px;
+  }
+  .detail-row .k{
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .detail-row .v{
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .hint{
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: 8px;
+  }
+
+  /* Icon button (gear, etc.) - shares back-btn look */
+  .back-btn, .icon-btn{
+    width:48px; height:48px;
+    display:flex; align-items:center; justify-content:center;
+    background: none; border: none;
+    color: var(--text-primary);
+    border-radius: var(--radius-input);
+    cursor:pointer;
+  }
+  .back-btn:active, .icon-btn:active{ background: var(--border); }
+  .back-btn svg, .icon-btn svg{ width:22px; height:22px; }
+
+  /* Settings screen */
+  .settings-section{ margin-bottom: 28px; }
+  .settings-section-title{
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+  .asset-row, .preset-row{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .asset-row input, .preset-row input{
+    height: 40px;
+    font-size: 14px;
+    padding: 0 10px;
+  }
+  .asset-row .sym-input{ width: 78px; text-transform: uppercase; flex-shrink:0; }
+  .asset-row .label-input{ flex: 1; min-width: 0; }
+  .asset-row .value-input-wrap{ position:relative; width: 84px; flex-shrink:0; }
+  .asset-row .value-input-wrap input{ padding-left: 20px; width:100%; }
+  .asset-row .value-input-wrap .prefix{ left: 8px; font-size: 13px; }
+  .preset-row .preset-input{ width: 70px; flex-shrink:0; }
+  .preset-unit-label{ font-size: 13px; color: var(--text-secondary); flex-shrink:0; }
+  .row-delete{
+    width: 32px; height: 32px; flex-shrink:0;
+    border:none; background:none;
+    color: var(--text-secondary);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    border-radius: var(--radius-input);
+  }
+  .row-delete:active{ background: var(--error-bg); color: var(--error); }
+  .btn-add-row{
+    background:none;
+    border:none;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    padding: 4px 0;
+    cursor:pointer;
+  }
+
+  /* Discreet history on result screen */
+  .history-toggle{
+    display:block;
+    background:none;
+    border:none;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    padding: 8px 0;
+    cursor:pointer;
+    text-align:left;
+  }
+  .history-list{ display:none; margin-top:2px; }
+  .history-list.open{ display:block; }
+  .history-row{
+    display:flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .history-row:last-child{ border-bottom:none; }
+  .history-row .h-asset{ font-weight:500; color: var(--text-primary); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ECRAN 1 : ACTIF -->
+  <section class="screen" id="screen-asset">
+    <div class="topbar">
+      <span class="step-indicator">Étape 1 / 5</span>
+      <button class="icon-btn" id="btn-open-settings" aria-label="Paramètres" style="margin-left:auto;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+    <div class="screen-header">
+      <h1 class="screen-title">Choisis ton actif</h1>
+      <p class="screen-subtitle">La sélection passe automatiquement à l'étape suivante</p>
+    </div>
+    <div class="content">
+      <div class="asset-grid" id="asset-grid"></div>
+    </div>
+  </section>
+
+  <!-- ECRAN PARAMETRES -->
+  <section class="screen" id="screen-settings">
+    <div class="topbar">
+      <button class="back-btn" id="btn-settings-back" data-back="screen-asset" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="step-indicator">Paramètres</span>
+    </div>
+    <div class="screen-header">
+      <h1 class="screen-title">Paramètres</h1>
+      <p class="screen-subtitle">Personnalise tes actifs et tes presets de risque</p>
+    </div>
+    <div class="content">
+      <div class="settings-section">
+        <div class="settings-section-title">Actifs</div>
+        <div id="settings-asset-list"></div>
+        <button type="button" class="btn-add-row" id="btn-add-asset">+ Ajouter un actif</button>
+        <div class="hint" id="asset-settings-error" style="color:var(--error); display:none;"></div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Presets de risque (%)</div>
+        <div id="settings-preset-list"></div>
+        <button type="button" class="btn-add-row" id="btn-add-preset">+ Ajouter un preset</button>
+        <div class="hint" id="preset-settings-error" style="color:var(--error); display:none;"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+  </section>
+
+  <!-- ECRAN 2 : CAPITAL -->
+  <section class="screen" id="screen-balance">
+    <div class="topbar">
+      <button class="back-btn" data-back="screen-asset" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="step-indicator">Étape 2 / 5</span>
+    </div>
+    <div class="screen-header">
+      <h1 class="screen-title">Capital du compte</h1>
+      <p class="screen-subtitle">Montant total disponible sur ton compte de trading</p>
+    </div>
+    <div class="content">
+      <div class="field">
+        <label class="field-label" for="input-balance">Capital</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input class="tabular has-prefix" type="text" inputmode="decimal" id="input-balance" placeholder="0.00">
+        </div>
+        <div class="hint" id="balance-error" style="color:var(--error); display:none;"></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="bottom-actions">
+        <button class="btn-primary" id="btn-balance-next">Suivant</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ECRAN 3 : RISQUE -->
+  <section class="screen" id="screen-risk">
+    <div class="topbar">
+      <button class="back-btn" data-back="screen-balance" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="step-indicator">Étape 3 / 5</span>
+    </div>
+    <div class="screen-header">
+      <h1 class="screen-title">Risque accepté</h1>
+      <p class="screen-subtitle">Quelle part es-tu prêt à risquer sur ce trade ?</p>
+    </div>
+    <div class="content">
+      <div class="switch-row" id="risk-mode-switch">
+        <div class="switch-option" data-mode="percent">% du capital</div>
+        <div class="switch-option" data-mode="dollar">Montant $ fixe</div>
+      </div>
+
+      <div id="risk-percent-block">
+        <div class="preset-grid" id="risk-preset-grid"></div>
+        <div class="divider-label">ou personnalisé</div>
+        <div class="field">
+          <div class="input-wrap">
+            <input class="tabular" type="text" inputmode="decimal" id="input-risk-custom" placeholder="Ex: 0.6">
+            <span class="prefix" style="left:auto; right:16px;">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="risk-dollar-block" style="display:none;">
+        <div class="field">
+          <label class="field-label" for="input-risk-dollar">Montant à risquer</label>
+          <div class="input-wrap">
+            <span class="prefix">$</span>
+            <input class="tabular has-prefix" type="text" inputmode="decimal" id="input-risk-dollar" placeholder="0.00">
+          </div>
+        </div>
+      </div>
+
+      <div class="banner warning" id="risk-warning" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.18 14.18A2 2 0 0 0 3.9 21h16.2a2 2 0 0 0 1.79-2.96L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        <span id="risk-warning-text">Risque élevé : supérieur à 2% du capital.</span>
+      </div>
+
+      <div class="hint" id="risk-error" style="color:var(--error); display:none;"></div>
+
+      <div class="spacer"></div>
+      <div class="bottom-actions">
+        <button class="btn-primary" id="btn-risk-next">Suivant</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ECRAN 4 : STOP LOSS -->
+  <section class="screen" id="screen-sl">
+    <div class="topbar">
+      <button class="back-btn" data-back="screen-risk" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="step-indicator">Étape 4 / 5</span>
+    </div>
+    <div class="screen-header">
+      <h1 class="screen-title">Stop Loss</h1>
+      <p class="screen-subtitle">Distance de prix jusqu'à ton stop loss</p>
+    </div>
+    <div class="content">
+      <div class="switch-row" id="sl-mode-switch">
+        <div class="switch-option" data-mode="raw">Distance brute</div>
+        <div class="switch-option" data-mode="entryExit">Entrée + Sortie</div>
+      </div>
+
+      <div id="sl-raw-block">
+        <div class="field">
+          <label class="field-label" for="input-sl-raw">Distance de prix (SL)</label>
+          <div class="input-wrap">
+            <input class="tabular" type="text" inputmode="decimal" id="input-sl-raw" placeholder="Ex: 0.0025">
+          </div>
+        </div>
+      </div>
+
+      <div id="sl-entryexit-block" style="display:none;">
+        <div class="field">
+          <label class="field-label" for="input-entry">Prix d'entrée</label>
+          <div class="input-wrap">
+            <input class="tabular" type="text" inputmode="decimal" id="input-entry" placeholder="Ex: 1.0850">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="input-exit">Prix de sortie (SL)</label>
+          <div class="input-wrap">
+            <input class="tabular" type="text" inputmode="decimal" id="input-exit" placeholder="Ex: 1.0825">
+          </div>
+        </div>
+        <div class="detail-row">
+          <span class="k">Distance calculée</span>
+          <span class="v tabular" id="sl-computed-distance">—</span>
+        </div>
+      </div>
+
+      <div class="hint" id="sl-error" style="color:var(--error); display:none;"></div>
+
+      <div class="spacer"></div>
+      <div class="bottom-actions">
+        <button class="btn-primary" id="btn-sl-next">Calculer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ECRAN 5 : RESULTAT -->
+  <section class="screen" id="screen-result">
+    <div class="topbar">
+      <button class="back-btn" data-back="screen-sl" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="step-indicator">Résultat</span>
+    </div>
+    <div class="screen-header">
+      <h1 class="screen-title" id="result-asset-title">—</h1>
+      <p class="screen-subtitle">Taille de position calculée</p>
+    </div>
+    <div class="content">
+      <div id="result-error-banner" style="display:none;"></div>
+
+      <div id="result-body" style="display:none;">
+        <div class="result-card">
+          <div class="result-label">Nombre de lots</div>
+          <div class="result-value tabular" id="result-lots">0.00</div>
+        </div>
+        <div class="detail-row">
+          <span class="k">Risque en $</span>
+          <span class="v tabular" id="result-risk-dollars">$0.00</span>
+        </div>
+        <div class="detail-row">
+          <span class="k">Actif</span>
+          <span class="v" id="result-asset-name">—</span>
+        </div>
+        <div class="hint" id="result-formula-hint"></div>
+        <button type="button" class="history-toggle" id="history-toggle" style="display:none;">Voir l'historique (0)</button>
+        <div class="history-list" id="history-list"></div>
+      </div>
+
+      <div class="spacer"></div>
+      <div class="bottom-actions">
+        <button class="btn-primary" id="btn-new-calc">Nouveau calcul</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "positionSizeCalculatorConfig";
+
+  var DEFAULT_ASSETS = [
+    { _id: "a1", symbol: "EURUSD", label: "Forex",    value: 10 },
+    { _id: "a2", symbol: "BTCUSD", label: "Crypto",   value: 1  },
+    { _id: "a3", symbol: "SPX500", label: "Indice",   value: 1  },
+    { _id: "a4", symbol: "USOIL",  label: "Matières", value: 1  },
+    { _id: "a5", symbol: "XAUUSD", label: "Métal",    value: 1  }
+  ];
+
+  var DEFAULT_RISK_PRESETS = [0.25, 0.5, 0.75, 1, 1.5, 2];
+  var HISTORY_MAX = 5;
+
+  var DEFAULT_STATE = {
+    asset: null,
+    balance: null,
+    riskMode: "percent",
+    riskValue: null,
+    riskPresets: DEFAULT_RISK_PRESETS,
+    slMode: "raw",
+    slValue: null,
+    entryPrice: null,
+    exitPrice: null,
+    assets: DEFAULT_ASSETS,
+    history: []
+  };
+
+  var state = loadState();
+
+  function loadState(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
+      var parsed = JSON.parse(raw);
+      var merged = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      for (var k in merged) {
+        if (parsed.hasOwnProperty(k) && parsed[k] !== undefined) merged[k] = parsed[k];
+      }
+      if (!merged.assets || !Array.isArray(merged.assets) || merged.assets.length === 0) {
+        merged.assets = JSON.parse(JSON.stringify(DEFAULT_ASSETS));
+      }
+      if (!merged.riskPresets || !Array.isArray(merged.riskPresets)) {
+        merged.riskPresets = DEFAULT_RISK_PRESETS.slice();
+      }
+      if (!merged.history || !Array.isArray(merged.history)) {
+        merged.history = [];
+      }
+      return merged;
+    } catch(e){
+      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    }
+  }
+
+  function findAsset(symbol){
+    for (var i=0;i<state.assets.length;i++){
+      if (state.assets[i].symbol === symbol) return state.assets[i];
+    }
+    return null;
+  }
+
+  function saveState(){
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch(e){
+      // localStorage indisponible (mode privé, quota...) : on continue sans planter
+      console.warn("Impossible de sauvegarder la configuration :", e);
+    }
+  }
+
+  // ---------- Navigation ----------
+  var screens = ["screen-asset","screen-settings","screen-balance","screen-risk","screen-sl","screen-result"];
+
+  function showScreen(id){
+    for (var i=0;i<screens.length;i++){
+      document.getElementById(screens[i]).classList.toggle("active", screens[i]===id);
+    }
+    window.scrollTo(0,0);
+  }
+
+  document.querySelectorAll(".back-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      showScreen(btn.getAttribute("data-back"));
+    });
+  });
+
+  // ---------- Ecran 1 : Actif ----------
+  var assetGrid = document.getElementById("asset-grid");
+  function renderAssetGrid(){
+    assetGrid.innerHTML = "";
+    state.assets.forEach(function(a){
+      var card = document.createElement("div");
+      card.className = "asset-card" + (state.asset === a.symbol ? " selected" : "");
+      card.setAttribute("role","button");
+      card.innerHTML = '<div class="asset-symbol">'+a.symbol+'</div><div class="asset-label">'+(a.label || "")+'</div>';
+      card.addEventListener("click", function(){
+        state.asset = a.symbol;
+        saveState();
+        renderAssetGrid();
+        populateBalanceScreen();
+        showScreen("screen-balance");
+      });
+      assetGrid.appendChild(card);
+    });
+  }
+
+  document.getElementById("btn-open-settings").addEventListener("click", function(){
+    renderAssetSettings();
+    renderPresetSettings();
+    updateAssetDuplicateWarning();
+    updatePresetDuplicateWarning();
+    showScreen("screen-settings");
+  });
+
+  document.getElementById("btn-settings-back").addEventListener("click", function(){
+    renderAssetGrid();
+    populateRiskScreen();
+  });
+
+  // ---------- Ecran Paramètres ----------
+  function renderAssetSettings(){
+    var container = document.getElementById("settings-asset-list");
+    container.innerHTML = "";
+    state.assets.forEach(function(a){
+      var row = document.createElement("div");
+      row.className = "asset-row";
+
+      var symInput = document.createElement("input");
+      symInput.type = "text";
+      symInput.className = "sym-input tabular";
+      symInput.value = a.symbol || "";
+      symInput.maxLength = 12;
+      symInput.addEventListener("input", function(){
+        a.symbol = symInput.value.toUpperCase();
+        saveState();
+        updateAssetDuplicateWarning();
+      });
+
+      var labelInput = document.createElement("input");
+      labelInput.type = "text";
+      labelInput.className = "label-input";
+      labelInput.value = a.label || "";
+      labelInput.placeholder = "Libellé";
+      labelInput.addEventListener("input", function(){
+        a.label = labelInput.value;
+        saveState();
+      });
+
+      var valueWrap = document.createElement("div");
+      valueWrap.className = "value-input-wrap";
+      var valuePrefix = document.createElement("span");
+      valuePrefix.className = "prefix";
+      valuePrefix.textContent = "$";
+      var valueInput = document.createElement("input");
+      valueInput.type = "text";
+      valueInput.setAttribute("inputmode", "decimal");
+      valueInput.className = "tabular";
+      valueInput.value = (a.value !== null && a.value !== undefined) ? String(a.value) : "";
+      valueInput.addEventListener("input", function(){
+        var v = parseFloat(valueInput.value.replace(",", "."));
+        a.value = isNaN(v) ? null : v;
+        saveState();
+      });
+      valueWrap.appendChild(valuePrefix);
+      valueWrap.appendChild(valueInput);
+
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "row-delete";
+      delBtn.setAttribute("aria-label","Supprimer");
+      delBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+      delBtn.addEventListener("click", function(){
+        state.assets = state.assets.filter(function(x){ return x._id !== a._id; });
+        if (state.asset === a.symbol) state.asset = null;
+        saveState();
+        renderAssetSettings();
+        updateAssetDuplicateWarning();
+      });
+
+      row.appendChild(symInput);
+      row.appendChild(labelInput);
+      row.appendChild(valueWrap);
+      row.appendChild(delBtn);
+      container.appendChild(row);
+    });
+  }
+
+  function updateAssetDuplicateWarning(){
+    var counts = {};
+    state.assets.forEach(function(a){
+      var key = (a.symbol || "").trim().toUpperCase();
+      if (!key) return;
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    var dups = Object.keys(counts).filter(function(k){ return counts[k] > 1; });
+    var el = document.getElementById("asset-settings-error");
+    if (dups.length > 0) {
+      el.textContent = "Symbole(s) en double : " + dups.join(", ");
+      el.style.display = "block";
+    } else {
+      el.style.display = "none";
+    }
+  }
+
+  document.getElementById("btn-add-asset").addEventListener("click", function(){
+    state.assets.push({ _id: "a" + Date.now() + Math.floor(Math.random()*1000), symbol: "NOUVEAU", label: "", value: 1 });
+    saveState();
+    renderAssetSettings();
+    updateAssetDuplicateWarning();
+  });
+
+  function renderPresetSettings(){
+    var container = document.getElementById("settings-preset-list");
+    container.innerHTML = "";
+    state.riskPresets.forEach(function(p, idx){
+      var row = document.createElement("div");
+      row.className = "preset-row";
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.setAttribute("inputmode", "decimal");
+      input.className = "preset-input tabular";
+      input.value = String(p);
+      input.addEventListener("input", function(){
+        var v = parseFloat(input.value.replace(",", "."));
+        state.riskPresets[idx] = isNaN(v) ? 0 : v;
+        saveState();
+      });
+      input.addEventListener("blur", function(){
+        state.riskPresets = state.riskPresets.filter(function(x){
+          return typeof x === "number" && !isNaN(x) && x > 0;
+        });
+        state.riskPresets.sort(function(a,b){ return a-b; });
+        saveState();
+        renderPresetSettings();
+        updatePresetDuplicateWarning();
+      });
+
+      var unit = document.createElement("span");
+      unit.className = "preset-unit-label";
+      unit.textContent = "%";
+
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "row-delete";
+      delBtn.setAttribute("aria-label","Supprimer");
+      delBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+      delBtn.addEventListener("click", function(){
+        state.riskPresets.splice(idx,1);
+        saveState();
+        renderPresetSettings();
+        updatePresetDuplicateWarning();
+      });
+
+      row.appendChild(input);
+      row.appendChild(unit);
+      row.appendChild(delBtn);
+      container.appendChild(row);
+    });
+  }
+
+  function updatePresetDuplicateWarning(){
+    var counts = {};
+    state.riskPresets.forEach(function(p){ counts[p] = (counts[p] || 0) + 1; });
+    var dups = Object.keys(counts).filter(function(k){ return counts[k] > 1; });
+    var el = document.getElementById("preset-settings-error");
+    if (dups.length > 0) {
+      el.textContent = "Valeur(s) de preset en double : " + dups.join(", ") + "%";
+      el.style.display = "block";
+    } else {
+      el.style.display = "none";
+    }
+  }
+
+  document.getElementById("btn-add-preset").addEventListener("click", function(){
+    var last = state.riskPresets.length ? state.riskPresets[state.riskPresets.length-1] : 0;
+    state.riskPresets.push(Math.round((last + 0.25) * 100) / 100);
+    saveState();
+    renderPresetSettings();
+    updatePresetDuplicateWarning();
+  });
+
+  // ---------- Ecran 2 : Capital ----------
+  var inputBalance = document.getElementById("input-balance");
+  var balanceError = document.getElementById("balance-error");
+
+  function populateBalanceScreen(){
+    inputBalance.value = (state.balance !== null && state.balance !== undefined) ? String(state.balance) : "";
+  }
+
+  inputBalance.addEventListener("input", function(){
+    inputBalance.classList.remove("input-error");
+    balanceError.style.display = "none";
+    var v = parseFloat(inputBalance.value.replace(",", "."));
+    state.balance = isNaN(v) ? null : v;
+    saveState();
+  });
+
+  document.getElementById("btn-balance-next").addEventListener("click", function(){
+    var v = parseFloat((inputBalance.value || "").replace(",", "."));
+    if (isNaN(v) || v <= 0) {
+      inputBalance.classList.add("input-error");
+      balanceError.textContent = "Saisis un capital valide, supérieur à 0.";
+      balanceError.style.display = "block";
+      return;
+    }
+    state.balance = v;
+    saveState();
+    populateRiskScreen();
+    showScreen("screen-risk");
+  });
+
+  // ---------- Ecran 3 : Risque ----------
+  var riskModeSwitch = document.getElementById("risk-mode-switch");
+  var riskPercentBlock = document.getElementById("risk-percent-block");
+  var riskDollarBlock = document.getElementById("risk-dollar-block");
+  var riskPresetGrid = document.getElementById("risk-preset-grid");
+  var inputRiskCustom = document.getElementById("input-risk-custom");
+  var inputRiskDollar = document.getElementById("input-risk-dollar");
+  var riskWarning = document.getElementById("risk-warning");
+  var riskWarningText = document.getElementById("risk-warning-text");
+  var riskError = document.getElementById("risk-error");
+
+  function renderRiskPresets(){
+    riskPresetGrid.innerHTML = "";
+    (state.riskPresets || []).forEach(function(p){
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "preset-btn tabular" + (state.riskMode === "percent" && state.riskValue === p ? " selected" : "");
+      btn.textContent = p + "%";
+      btn.addEventListener("click", function(){
+        state.riskValue = p;
+        inputRiskCustom.value = "";
+        saveState();
+        renderRiskPresets();
+        updateRiskWarning();
+      });
+      riskPresetGrid.appendChild(btn);
+    });
+  }
+
+  function setRiskMode(mode){
+    state.riskMode = mode;
+    riskModeSwitch.querySelectorAll(".switch-option").forEach(function(opt){
+      opt.classList.toggle("active", opt.getAttribute("data-mode") === mode);
+    });
+    riskPercentBlock.style.display = mode === "percent" ? "block" : "none";
+    riskDollarBlock.style.display = mode === "dollar" ? "block" : "none";
+    saveState();
+    updateRiskWarning();
+  }
+
+  riskModeSwitch.querySelectorAll(".switch-option").forEach(function(opt){
+    opt.addEventListener("click", function(){
+      setRiskMode(opt.getAttribute("data-mode"));
+    });
+  });
+
+  inputRiskCustom.addEventListener("input", function(){
+    var v = parseFloat(inputRiskCustom.value.replace(",", "."));
+    if (!isNaN(v)) {
+      state.riskValue = v;
+      saveState();
+      renderRiskPresets();
+      updateRiskWarning();
+    }
+  });
+
+  inputRiskDollar.addEventListener("input", function(){
+    var v = parseFloat(inputRiskDollar.value.replace(",", "."));
+    state.riskValue = isNaN(v) ? null : v;
+    saveState();
+  });
+
+  function updateRiskWarning(){
+    riskWarning.style.display = "none";
+    if (state.riskMode === "percent" && typeof state.riskValue === "number" && state.riskValue > 2) {
+      riskWarningText.textContent = "Risque élevé : " + state.riskValue + "% du capital dépasse le seuil de 2%.";
+      riskWarning.style.display = "flex";
+    }
+  }
+
+  function populateRiskScreen(){
+    setRiskMode(state.riskMode || "percent");
+    renderRiskPresets();
+    var isPreset = (state.riskPresets || []).indexOf(state.riskValue) !== -1;
+    inputRiskCustom.value = (state.riskMode === "percent" && !isPreset && state.riskValue) ? String(state.riskValue) : "";
+    inputRiskDollar.value = (state.riskMode === "dollar" && state.riskValue) ? String(state.riskValue) : "";
+    riskError.style.display = "none";
+    updateRiskWarning();
+  }
+
+  document.getElementById("btn-risk-next").addEventListener("click", function(){
+    var v = state.riskValue;
+    if (state.riskMode === "percent") {
+      if (typeof v !== "number" || isNaN(v) || v <= 0) {
+        riskError.textContent = "Choisis un pourcentage prédéfini ou saisis une valeur personnalisée valide.";
+        riskError.style.display = "block";
+        return;
+      }
+    } else {
+      if (typeof v !== "number" || isNaN(v) || v <= 0) {
+        riskError.textContent = "Saisis un montant en $ valide, supérieur à 0.";
+        riskError.style.display = "block";
+        return;
+      }
+    }
+    riskError.style.display = "none";
+    saveState();
+    populateSlScreen();
+    showScreen("screen-sl");
+  });
+
+  // ---------- Ecran 4 : Stop Loss ----------
+  var slModeSwitch = document.getElementById("sl-mode-switch");
+  var slRawBlock = document.getElementById("sl-raw-block");
+  var slEntryExitBlock = document.getElementById("sl-entryexit-block");
+  var inputSlRaw = document.getElementById("input-sl-raw");
+  var inputEntry = document.getElementById("input-entry");
+  var inputExit = document.getElementById("input-exit");
+  var slComputedDistance = document.getElementById("sl-computed-distance");
+  var slError = document.getElementById("sl-error");
+
+  function setSlMode(mode){
+    state.slMode = mode;
+    slModeSwitch.querySelectorAll(".switch-option").forEach(function(opt){
+      opt.classList.toggle("active", opt.getAttribute("data-mode") === mode);
+    });
+    slRawBlock.style.display = mode === "raw" ? "block" : "none";
+    slEntryExitBlock.style.display = mode === "entryExit" ? "block" : "none";
+    saveState();
+  }
+
+  slModeSwitch.querySelectorAll(".switch-option").forEach(function(opt){
+    opt.addEventListener("click", function(){
+      setSlMode(opt.getAttribute("data-mode"));
+    });
+  });
+
+  inputSlRaw.addEventListener("input", function(){
+    var v = parseFloat(inputSlRaw.value.replace(",", "."));
+    state.slValue = isNaN(v) ? null : v;
+    saveState();
+  });
+
+  function updateComputedDistance(){
+    var entry = parseFloat((inputEntry.value || "").replace(",", "."));
+    var exit = parseFloat((inputExit.value || "").replace(",", "."));
+    if (!isNaN(entry) && !isNaN(exit)) {
+      slComputedDistance.textContent = Math.abs(entry - exit).toString();
+    } else {
+      slComputedDistance.textContent = "—";
+    }
+  }
+
+  inputEntry.addEventListener("input", function(){
+    var v = parseFloat(inputEntry.value.replace(",", "."));
+    state.entryPrice = isNaN(v) ? null : v;
+    saveState();
+    updateComputedDistance();
+  });
+
+  inputExit.addEventListener("input", function(){
+    var v = parseFloat(inputExit.value.replace(",", "."));
+    state.exitPrice = isNaN(v) ? null : v;
+    saveState();
+    updateComputedDistance();
+  });
+
+  function populateSlScreen(){
+    setSlMode(state.slMode || "raw");
+    inputSlRaw.value = (state.slValue !== null && state.slValue !== undefined) ? String(state.slValue) : "";
+    inputEntry.value = (state.entryPrice !== null && state.entryPrice !== undefined) ? String(state.entryPrice) : "";
+    inputExit.value = (state.exitPrice !== null && state.exitPrice !== undefined) ? String(state.exitPrice) : "";
+    updateComputedDistance();
+    slError.style.display = "none";
+  }
+
+  document.getElementById("btn-sl-next").addEventListener("click", function(){
+    var distance;
+    if (state.slMode === "raw") {
+      distance = parseFloat((inputSlRaw.value || "").replace(",", "."));
+      if (isNaN(distance) || distance <= 0) {
+        slError.textContent = "Saisis une distance de stop loss valide, supérieure à 0.";
+        slError.style.display = "block";
+        return;
+      }
+    } else {
+      var entry = parseFloat((inputEntry.value || "").replace(",", "."));
+      var exit = parseFloat((inputExit.value || "").replace(",", "."));
+      if (isNaN(entry) || isNaN(exit)) {
+        slError.textContent = "Saisis un prix d'entrée et un prix de sortie valides.";
+        slError.style.display = "block";
+        return;
+      }
+      distance = Math.abs(entry - exit);
+      if (distance <= 0) {
+        slError.textContent = "Le prix d'entrée et le prix de sortie doivent être différents.";
+        slError.style.display = "block";
+        return;
+      }
+    }
+    slError.style.display = "none";
+    saveState();
+    computeAndShowResult();
+  });
+
+  // ---------- Ecran 5 : Résultat ----------
+  var resultErrorBanner = document.getElementById("result-error-banner");
+  var resultBody = document.getElementById("result-body");
+  var resultAssetTitle = document.getElementById("result-asset-title");
+  var resultLots = document.getElementById("result-lots");
+  var resultRiskDollars = document.getElementById("result-risk-dollars");
+  var resultAssetName = document.getElementById("result-asset-name");
+  var resultFormulaHint = document.getElementById("result-formula-hint");
+  var historyToggleBtn = document.getElementById("history-toggle");
+  var historyListEl = document.getElementById("history-list");
+
+  function pushHistory(asset, lot, riskDollars){
+    state.history = state.history || [];
+    state.history.unshift({ asset: asset, lot: lot, riskDollars: riskDollars, ts: Date.now() });
+    state.history = state.history.slice(0, HISTORY_MAX);
+    saveState();
+  }
+
+  function renderHistory(){
+    historyListEl.innerHTML = "";
+    historyListEl.classList.remove("open");
+    var hist = state.history || [];
+    historyToggleBtn.textContent = "Voir l'historique (" + hist.length + ")";
+    historyToggleBtn.style.display = hist.length > 0 ? "block" : "none";
+    hist.forEach(function(h){
+      var row = document.createElement("div");
+      row.className = "history-row";
+      row.innerHTML = '<span class="h-asset">' + h.asset + '</span><span>' + h.lot.toFixed(2) + ' lots · $' + h.riskDollars.toFixed(2) + '</span>';
+      historyListEl.appendChild(row);
+    });
+  }
+
+  historyToggleBtn.addEventListener("click", function(){
+    var isOpen = historyListEl.classList.toggle("open");
+    var hist = state.history || [];
+    historyToggleBtn.textContent = (isOpen ? "Masquer l'historique (" : "Voir l'historique (") + hist.length + ")";
+  });
+
+  function errorBannerHtml(message){
+    return '<div class="banner error">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>' +
+      '<span>' + message + '</span></div>';
+  }
+
+  function computeAndShowResult(){
+    resultAssetTitle.textContent = state.asset || "—";
+
+    var specs = findAsset(state.asset);
+
+    if (!state.asset || !specs) {
+      showResultError("Sélectionne un actif valide avant de calculer.");
+      return;
+    }
+
+    var riskDollars;
+    if (state.riskMode === "percent") {
+      if (typeof state.balance !== "number" || state.balance <= 0 || typeof state.riskValue !== "number" || state.riskValue <= 0) {
+        showResultError("Capital ou pourcentage de risque invalide.");
+        return;
+      }
+      riskDollars = state.balance * (state.riskValue / 100);
+    } else {
+      if (typeof state.riskValue !== "number" || state.riskValue <= 0) {
+        showResultError("Montant de risque en $ invalide.");
+        return;
+      }
+      riskDollars = state.riskValue;
+    }
+
+    var distanceSL;
+    if (state.slMode === "raw") {
+      if (typeof state.slValue !== "number" || state.slValue <= 0) {
+        showResultError("Distance de stop loss invalide.");
+        return;
+      }
+      distanceSL = state.slValue;
+    } else {
+      if (typeof state.entryPrice !== "number" || typeof state.exitPrice !== "number") {
+        showResultError("Prix d'entrée ou de sortie invalide.");
+        return;
+      }
+      distanceSL = Math.abs(state.entryPrice - state.exitPrice);
+      if (distanceSL <= 0) {
+        showResultError("Le prix d'entrée et le prix de sortie doivent être différents.");
+        return;
+      }
+    }
+
+    if (!specs.value || specs.value <= 0) {
+      showResultError("Valeur du pip invalide pour cet actif (à régler dans Paramètres).");
+      return;
+    }
+
+    var denom = distanceSL * specs.value;
+    if (!isFinite(denom) || denom <= 0) {
+      showResultError("Erreur de calcul : dénominateur invalide.");
+      return;
+    }
+
+    var lot = riskDollars / denom;
+    if (!isFinite(lot) || lot <= 0) {
+      showResultError("Le résultat du calcul est invalide. Vérifie tes valeurs.");
+      return;
+    }
+
+    lot = Math.round(lot * 100) / 100;
+    if (lot < 0.01) lot = 0.01;
+
+    resultErrorBanner.style.display = "none";
+    resultErrorBanner.innerHTML = "";
+    resultBody.style.display = "block";
+    resultLots.textContent = lot.toFixed(2);
+    resultRiskDollars.textContent = "$" + riskDollars.toFixed(2);
+    resultAssetName.textContent = state.asset;
+    resultFormulaHint.textContent = "Valeur : $" + specs.value + " par pip";
+
+    pushHistory(state.asset, lot, riskDollars);
+    renderHistory();
+
+    showScreen("screen-result");
+  }
+
+  function showResultError(message){
+    resultBody.style.display = "none";
+    resultErrorBanner.innerHTML = errorBannerHtml(message);
+    resultErrorBanner.style.display = "block";
+    showScreen("screen-result");
+  }
+
+  document.getElementById("btn-new-calc").addEventListener("click", function(){
+    // Les valeurs restent en mémoire (localStorage) pour pré-remplissage,
+    // on relance simplement le flux depuis l'écran 1.
+    renderAssetGrid();
+    showScreen("screen-asset");
+  });
+
+  // ---------- Initialisation ----------
+  function init(){
+    renderAssetGrid();
+    populateBalanceScreen();
+    populateRiskScreen();
+    populateSlScreen();
+    showScreen("screen-asset");
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
