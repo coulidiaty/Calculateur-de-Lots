@@ -348,6 +348,25 @@
     color: var(--text-secondary);
     margin-left: 4px;
   }
+  .result-sub{
+    display:flex;
+    align-items:baseline;
+    justify-content:center;
+    gap: 6px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .result-sub-label{
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .result-sub-value{
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
 
   .detail-row{
     display:flex;
@@ -669,6 +688,10 @@
         <div class="result-card">
           <div class="result-label">Nombre de lots</div>
           <div class="result-value tabular" id="result-lots">0.00</div>
+          <div class="result-sub">
+            <span class="result-sub-label">÷ 4</span>
+            <span class="result-sub-value tabular" id="result-lots-quarter">0.00</span>
+          </div>
         </div>
         <div class="detail-row">
           <span class="k">Risque en $</span>
@@ -677,6 +700,18 @@
         <div class="detail-row">
           <span class="k">Actif</span>
           <span class="v" id="result-asset-name">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="k">Stop Loss</span>
+          <span class="v tabular" id="result-sl-value">—</span>
+        </div>
+        <div class="detail-row" id="result-entry-row" style="display:none;">
+          <span class="k">Entrée</span>
+          <span class="v tabular" id="result-entry-value">—</span>
+        </div>
+        <div class="detail-row" id="result-exit-row" style="display:none;">
+          <span class="k">Sortie</span>
+          <span class="v tabular" id="result-exit-value">—</span>
         </div>
         <div class="hint" id="result-formula-hint"></div>
         <button type="button" class="history-toggle" id="history-toggle" style="display:none;">Voir l'historique (0)</button>
@@ -1207,8 +1242,14 @@
   var resultBody = document.getElementById("result-body");
   var resultAssetTitle = document.getElementById("result-asset-title");
   var resultLots = document.getElementById("result-lots");
+  var resultLotsQuarter = document.getElementById("result-lots-quarter");
   var resultRiskDollars = document.getElementById("result-risk-dollars");
   var resultAssetName = document.getElementById("result-asset-name");
+  var resultSlValue = document.getElementById("result-sl-value");
+  var resultEntryRow = document.getElementById("result-entry-row");
+  var resultEntryValue = document.getElementById("result-entry-value");
+  var resultExitRow = document.getElementById("result-exit-row");
+  var resultExitValue = document.getElementById("result-exit-value");
   var resultFormulaHint = document.getElementById("result-formula-hint");
   var historyToggleBtn = document.getElementById("history-toggle");
   var historyListEl = document.getElementById("history-list");
@@ -1310,12 +1351,29 @@
     lot = Math.round(lot * 100) / 100;
     if (lot < 0.01) lot = 0.01;
 
+    var quarterLot = lot / 4;
+    var quarterLotText = quarterLot.toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
+    if (quarterLotText.indexOf(".") === -1) quarterLotText += ".0";
+
     resultErrorBanner.style.display = "none";
     resultErrorBanner.innerHTML = "";
     resultBody.style.display = "block";
     resultLots.textContent = lot.toFixed(2);
+    resultLotsQuarter.textContent = quarterLotText;
     resultRiskDollars.textContent = "$" + riskDollars.toFixed(2);
     resultAssetName.textContent = state.asset;
+    resultSlValue.textContent = distanceSL.toString();
+
+    if (state.slMode === "entryExit") {
+      resultEntryRow.style.display = "flex";
+      resultExitRow.style.display = "flex";
+      resultEntryValue.textContent = state.entryPrice;
+      resultExitValue.textContent = state.exitPrice;
+    } else {
+      resultEntryRow.style.display = "none";
+      resultExitRow.style.display = "none";
+    }
+
     resultFormulaHint.textContent = "Valeur : $" + specs.value + " par pip";
 
     pushHistory(state.asset, lot, riskDollars);
