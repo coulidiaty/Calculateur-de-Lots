@@ -418,24 +418,36 @@
     text-transform: uppercase;
     letter-spacing: .03em;
   }
-  .asset-row, .preset-row{
+  .settings-section-hint{
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: -4px 0 12px;
+    line-height: 1.4;
+  }
+  .asset-row, .preset-row, .account-row{
     display:flex;
     align-items:center;
     gap: 8px;
     margin-bottom: 8px;
   }
-  .asset-row input, .preset-row input{
+  .asset-row input, .preset-row input, .account-row input{
     height: 40px;
     font-size: 14px;
     padding: 0 10px;
   }
-  .asset-row .sym-input{ width: 78px; text-transform: uppercase; flex-shrink:0; }
+  .asset-row .sym-input{ width: 78px; flex-shrink:0; text-transform: uppercase; }
   .asset-row .label-input{ flex: 1; min-width: 0; }
   .asset-row .value-input-wrap{ position:relative; width: 84px; flex-shrink:0; }
   .asset-row .value-input-wrap input{ padding-left: 20px; width:100%; }
   .asset-row .value-input-wrap .prefix{ left: 8px; font-size: 13px; }
   .preset-row .preset-input{ width: 70px; flex-shrink:0; }
   .preset-unit-label{ font-size: 13px; color: var(--text-secondary); flex-shrink:0; }
+
+  .account-row .name-input{ flex:1; min-width:0; }
+  .account-row .capital-input-wrap{ position:relative; width: 112px; flex-shrink:0; }
+  .account-row .capital-input-wrap input{ padding-left: 20px; width:100%; }
+  .account-row .capital-input-wrap .prefix{ left: 8px; font-size: 13px; }
+
   .row-delete{
     width: 32px; height: 32px; flex-shrink:0;
     border:none; background:none;
@@ -481,6 +493,93 @@
   }
   .history-row:last-child{ border-bottom:none; }
   .history-row .h-asset{ font-weight:500; color: var(--text-primary); }
+
+  /* Risk screen: per-account blocks */
+  .risk-account-block{ margin-bottom: 22px; }
+  .risk-account-header{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+  .risk-account-name{ font-size: 14px; font-weight: 600; }
+  .risk-account-capital{
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: right;
+    flex-shrink:0;
+  }
+  .suggestion-chips{
+    display:flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .suggestion-chip{
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  .suggestion-chip:active{ background: #EEF1FF; border-color: var(--accent); color: var(--accent); }
+
+  .link-btn{
+    background:none;
+    border:none;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor:pointer;
+    padding: 0;
+    text-decoration: underline;
+  }
+  .empty-hint{
+    text-align:center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    padding: 24px 8px;
+    line-height: 1.5;
+  }
+
+  /* Result screen: per-account cards */
+  .result-account-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .result-account-name{
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .result-account-sub{
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .result-account-lots{ text-align: right; flex-shrink:0; }
+  .result-account-lots .lots-value{
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+  .result-account-lots .lots-quarter{
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
 </style>
 </head>
 <body>
@@ -489,7 +588,7 @@
   <!-- ECRAN 1 : ACTIF -->
   <section class="screen" id="screen-asset">
     <div class="topbar">
-      <span class="step-indicator">Étape 1 / 5</span>
+      <span class="step-indicator">Étape 1 / 4</span>
       <button class="icon-btn" id="btn-open-settings" aria-label="Paramètres" style="margin-left:auto;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
@@ -513,9 +612,27 @@
     </div>
     <div class="screen-header">
       <h1 class="screen-title">Paramètres</h1>
-      <p class="screen-subtitle">Personnalise tes actifs et tes presets de risque</p>
+      <p class="screen-subtitle">Personnalise tes comptes, ton diviseur et tes actifs</p>
     </div>
     <div class="content">
+
+      <div class="settings-section">
+        <div class="settings-section-title">Diviseur de lots</div>
+        <div class="input-wrap">
+          <input class="tabular" type="text" inputmode="decimal" id="input-lot-divisor" placeholder="4">
+          <span class="prefix" style="left:auto; right:16px;">÷</span>
+        </div>
+        <div class="hint">Le nombre de lots calculé sera aussi affiché divisé par cette valeur.</div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Comptes</div>
+        <div class="settings-section-hint">Chaque compte définit un champ de risque sur l'écran 2. Le capital sert au calcul en mode "% du capital".</div>
+        <div id="settings-account-list"></div>
+        <button type="button" class="btn-add-row" id="btn-add-account">+ Ajouter un compte</button>
+        <div class="hint" id="account-settings-error" style="color:var(--error); display:none;"></div>
+      </div>
+
       <div class="settings-section">
         <div class="settings-section-title">Actifs</div>
         <div id="settings-asset-list"></div>
@@ -523,86 +640,38 @@
         <div class="hint" id="asset-settings-error" style="color:var(--error); display:none;"></div>
       </div>
 
-      <div class="settings-section">
-        <div class="settings-section-title">Presets de risque (%)</div>
-        <div id="settings-preset-list"></div>
-        <button type="button" class="btn-add-row" id="btn-add-preset">+ Ajouter un preset</button>
-        <div class="hint" id="preset-settings-error" style="color:var(--error); display:none;"></div>
-      </div>
       <div class="spacer"></div>
     </div>
   </section>
 
-  <!-- ECRAN 2 : CAPITAL -->
-  <section class="screen" id="screen-balance">
+  <!-- ECRAN 2 : RISQUE -->
+  <section class="screen" id="screen-risk">
     <div class="topbar">
       <button class="back-btn" data-back="screen-asset" aria-label="Retour">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <span class="step-indicator">Étape 2 / 5</span>
-    </div>
-    <div class="screen-header">
-      <h1 class="screen-title">Capital du compte</h1>
-      <p class="screen-subtitle">Montant total disponible sur ton compte de trading</p>
-    </div>
-    <div class="content">
-      <div class="field">
-        <label class="field-label" for="input-balance">Capital</label>
-        <div class="input-wrap">
-          <span class="prefix">$</span>
-          <input class="tabular has-prefix" type="text" inputmode="decimal" id="input-balance" placeholder="0.00">
-        </div>
-        <div class="hint" id="balance-error" style="color:var(--error); display:none;"></div>
-      </div>
-      <div class="spacer"></div>
-      <div class="bottom-actions">
-        <button class="btn-primary" id="btn-balance-next">Suivant</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ECRAN 3 : RISQUE -->
-  <section class="screen" id="screen-risk">
-    <div class="topbar">
-      <button class="back-btn" data-back="screen-balance" aria-label="Retour">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <span class="step-indicator">Étape 3 / 5</span>
+      <span class="step-indicator">Étape 2 / 4</span>
     </div>
     <div class="screen-header">
       <h1 class="screen-title">Risque accepté</h1>
-      <p class="screen-subtitle">Quelle part es-tu prêt à risquer sur ce trade ?</p>
+      <p class="screen-subtitle">Une valeur par compte : les champs vides sont ignorés</p>
     </div>
     <div class="content">
       <div class="switch-row" id="risk-mode-switch">
-        <div class="switch-option" data-mode="percent">% du capital</div>
         <div class="switch-option" data-mode="dollar">Montant $ fixe</div>
+        <div class="switch-option" data-mode="percent">% du capital</div>
       </div>
 
-      <div id="risk-percent-block">
-        <div class="preset-grid" id="risk-preset-grid"></div>
-        <div class="divider-label">ou personnalisé</div>
-        <div class="field">
-          <div class="input-wrap">
-            <input class="tabular" type="text" inputmode="decimal" id="input-risk-custom" placeholder="Ex: 0.6">
-            <span class="prefix" style="left:auto; right:16px;">%</span>
-          </div>
-        </div>
-      </div>
+      <div id="risk-accounts-container"></div>
 
-      <div id="risk-dollar-block" style="display:none;">
-        <div class="field">
-          <label class="field-label" for="input-risk-dollar">Montant à risquer</label>
-          <div class="input-wrap">
-            <span class="prefix">$</span>
-            <input class="tabular has-prefix" type="text" inputmode="decimal" id="input-risk-dollar" placeholder="0.00">
-          </div>
-        </div>
+      <div class="empty-hint" id="risk-no-accounts" style="display:none;">
+        Aucun compte configuré.<br>
+        <button type="button" class="link-btn" id="btn-goto-settings-from-risk">Ajouter un compte dans les Paramètres</button>
       </div>
 
       <div class="banner warning" id="risk-warning" style="display:none;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.18 14.18A2 2 0 0 0 3.9 21h16.2a2 2 0 0 0 1.79-2.96L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-        <span id="risk-warning-text">Risque élevé : supérieur à 2% du capital.</span>
+        <span id="risk-warning-text">Risque élevé.</span>
       </div>
 
       <div class="hint" id="risk-error" style="color:var(--error); display:none;"></div>
@@ -614,13 +683,13 @@
     </div>
   </section>
 
-  <!-- ECRAN 4 : STOP LOSS -->
+  <!-- ECRAN 3 : STOP LOSS -->
   <section class="screen" id="screen-sl">
     <div class="topbar">
       <button class="back-btn" data-back="screen-risk" aria-label="Retour">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <span class="step-indicator">Étape 4 / 5</span>
+      <span class="step-indicator">Étape 3 / 4</span>
     </div>
     <div class="screen-header">
       <h1 class="screen-title">Stop Loss</h1>
@@ -669,7 +738,7 @@
     </div>
   </section>
 
-  <!-- ECRAN 5 : RESULTAT -->
+  <!-- ECRAN 4 : RESULTAT -->
   <section class="screen" id="screen-result">
     <div class="topbar">
       <button class="back-btn" data-back="screen-sl" aria-label="Retour">
@@ -679,24 +748,13 @@
     </div>
     <div class="screen-header">
       <h1 class="screen-title" id="result-asset-title">—</h1>
-      <p class="screen-subtitle">Taille de position calculée</p>
+      <p class="screen-subtitle">Taille de position par compte</p>
     </div>
     <div class="content">
       <div id="result-error-banner" style="display:none;"></div>
+      <div id="result-skip-banner" style="display:none;"></div>
 
       <div id="result-body" style="display:none;">
-        <div class="result-card">
-          <div class="result-label">Nombre de lots</div>
-          <div class="result-value tabular" id="result-lots">0.00</div>
-          <div class="result-sub">
-            <span class="result-sub-label">÷ 4</span>
-            <span class="result-sub-value tabular" id="result-lots-quarter">0.00</span>
-          </div>
-        </div>
-        <div class="detail-row">
-          <span class="k">Risque en $</span>
-          <span class="v tabular" id="result-risk-dollars">$0.00</span>
-        </div>
         <div class="detail-row">
           <span class="k">Actif</span>
           <span class="v" id="result-asset-name">—</span>
@@ -714,6 +772,9 @@
           <span class="v tabular" id="result-exit-value">—</span>
         </div>
         <div class="hint" id="result-formula-hint"></div>
+
+        <div id="result-accounts-list" style="margin-top:16px;"></div>
+
         <button type="button" class="history-toggle" id="history-toggle" style="display:none;">Voir l'historique (0)</button>
         <div class="history-list" id="history-list"></div>
       </div>
@@ -741,15 +802,22 @@
     { _id: "a5", symbol: "XAUUSD", label: "Métal",    value: 1  }
   ];
 
-  var DEFAULT_RISK_PRESETS = [0.25, 0.5, 0.75, 1, 1.5, 2];
+  var DEFAULT_ACCOUNTS = [
+    { _id: "acc1", name: "Compte 1", capital: null }
+  ];
+
   var HISTORY_MAX = 5;
+  var SUGGESTIONS_MAX = 3;
+  var ACCOUNT_HISTORY_CAP = 10;
 
   var DEFAULT_STATE = {
     asset: null,
-    balance: null,
-    riskMode: "percent",
-    riskValue: null,
-    riskPresets: DEFAULT_RISK_PRESETS,
+    lotDivisor: 4,
+    accounts: DEFAULT_ACCOUNTS,
+    riskMode: "dollar",
+    riskValuesPercent: {},
+    riskValuesDollar: {},
+    accountHistory: {},
     slMode: "raw",
     slValue: null,
     entryPrice: null,
@@ -772,8 +840,23 @@
       if (!merged.assets || !Array.isArray(merged.assets) || merged.assets.length === 0) {
         merged.assets = JSON.parse(JSON.stringify(DEFAULT_ASSETS));
       }
-      if (!merged.riskPresets || !Array.isArray(merged.riskPresets)) {
-        merged.riskPresets = DEFAULT_RISK_PRESETS.slice();
+      if (!merged.accounts || !Array.isArray(merged.accounts)) {
+        merged.accounts = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+      }
+      if (typeof merged.lotDivisor !== "number" || isNaN(merged.lotDivisor) || merged.lotDivisor <= 0) {
+        merged.lotDivisor = 4;
+      }
+      if (merged.riskMode !== "percent" && merged.riskMode !== "dollar") {
+        merged.riskMode = "dollar";
+      }
+      if (!merged.riskValuesPercent || typeof merged.riskValuesPercent !== "object") {
+        merged.riskValuesPercent = {};
+      }
+      if (!merged.riskValuesDollar || typeof merged.riskValuesDollar !== "object") {
+        merged.riskValuesDollar = {};
+      }
+      if (!merged.accountHistory || typeof merged.accountHistory !== "object") {
+        merged.accountHistory = {};
       }
       if (!merged.history || !Array.isArray(merged.history)) {
         merged.history = [];
@@ -800,8 +883,14 @@
     }
   }
 
+  function escapeHtml(str){
+    var div = document.createElement("div");
+    div.textContent = str == null ? "" : String(str);
+    return div.innerHTML;
+  }
+
   // ---------- Navigation ----------
-  var screens = ["screen-asset","screen-settings","screen-balance","screen-risk","screen-sl","screen-result"];
+  var screens = ["screen-asset","screen-settings","screen-risk","screen-sl","screen-result"];
 
   function showScreen(id){
     for (var i=0;i<screens.length;i++){
@@ -824,32 +913,50 @@
       var card = document.createElement("div");
       card.className = "asset-card" + (state.asset === a.symbol ? " selected" : "");
       card.setAttribute("role","button");
-      card.innerHTML = '<div class="asset-symbol">'+a.symbol+'</div><div class="asset-label">'+(a.label || "")+'</div>';
+      card.innerHTML = '<div class="asset-symbol">'+escapeHtml(a.symbol)+'</div><div class="asset-label">'+escapeHtml(a.label || "")+'</div>';
       card.addEventListener("click", function(){
         state.asset = a.symbol;
         saveState();
         renderAssetGrid();
-        populateBalanceScreen();
-        showScreen("screen-balance");
+        populateRiskScreen();
+        showScreen("screen-risk");
       });
       assetGrid.appendChild(card);
     });
   }
 
-  document.getElementById("btn-open-settings").addEventListener("click", function(){
+  function openSettings(){
+    populateLotDivisor();
     renderAssetSettings();
-    renderPresetSettings();
     updateAssetDuplicateWarning();
-    updatePresetDuplicateWarning();
+    renderAccountSettings();
+    updateAccountDuplicateWarning();
     showScreen("screen-settings");
-  });
+  }
+
+  document.getElementById("btn-open-settings").addEventListener("click", openSettings);
 
   document.getElementById("btn-settings-back").addEventListener("click", function(){
     renderAssetGrid();
     populateRiskScreen();
   });
 
-  // ---------- Ecran Paramètres ----------
+  // ---------- Ecran Paramètres : Diviseur de lots ----------
+  var inputLotDivisor = document.getElementById("input-lot-divisor");
+
+  function populateLotDivisor(){
+    inputLotDivisor.value = (typeof state.lotDivisor === "number" && !isNaN(state.lotDivisor)) ? String(state.lotDivisor) : "4";
+  }
+
+  inputLotDivisor.addEventListener("input", function(){
+    var v = parseFloat(inputLotDivisor.value.replace(",", "."));
+    if (!isNaN(v) && v > 0) {
+      state.lotDivisor = v;
+      saveState();
+    }
+  });
+
+  // ---------- Ecran Paramètres : Actifs ----------
   function renderAssetSettings(){
     var container = document.getElementById("settings-asset-list");
     container.innerHTML = "";
@@ -919,11 +1026,7 @@
 
   function updateAssetDuplicateWarning(){
     var counts = {};
-    state.assets.forEach(function(a){
-      var key = (a.symbol || "").trim().toUpperCase();
-      if (!key) return;
-      counts[key] = (counts[key] || 0) + 1;
-    });
+    state.assets.forEach(function(a){ var s=(a.symbol||"").trim(); if(s) counts[s]=(counts[s]||0)+1; });
     var dups = Object.keys(counts).filter(function(k){ return counts[k] > 1; });
     var el = document.getElementById("asset-settings-error");
     if (dups.length > 0) {
@@ -941,36 +1044,43 @@
     updateAssetDuplicateWarning();
   });
 
-  function renderPresetSettings(){
-    var container = document.getElementById("settings-preset-list");
+  // ---------- Ecran Paramètres : Comptes ----------
+  function renderAccountSettings(){
+    var container = document.getElementById("settings-account-list");
     container.innerHTML = "";
-    state.riskPresets.forEach(function(p, idx){
+    state.accounts.forEach(function(acc){
       var row = document.createElement("div");
-      row.className = "preset-row";
+      row.className = "account-row";
 
-      var input = document.createElement("input");
-      input.type = "text";
-      input.setAttribute("inputmode", "decimal");
-      input.className = "preset-input tabular";
-      input.value = String(p);
-      input.addEventListener("input", function(){
-        var v = parseFloat(input.value.replace(",", "."));
-        state.riskPresets[idx] = isNaN(v) ? 0 : v;
+      var nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.className = "name-input";
+      nameInput.value = acc.name || "";
+      nameInput.placeholder = "Nom du compte";
+      nameInput.addEventListener("input", function(){
+        acc.name = nameInput.value;
         saveState();
-      });
-      input.addEventListener("blur", function(){
-        state.riskPresets = state.riskPresets.filter(function(x){
-          return typeof x === "number" && !isNaN(x) && x > 0;
-        });
-        state.riskPresets.sort(function(a,b){ return a-b; });
-        saveState();
-        renderPresetSettings();
-        updatePresetDuplicateWarning();
+        updateAccountDuplicateWarning();
       });
 
-      var unit = document.createElement("span");
-      unit.className = "preset-unit-label";
-      unit.textContent = "%";
+      var capWrap = document.createElement("div");
+      capWrap.className = "capital-input-wrap";
+      var capPrefix = document.createElement("span");
+      capPrefix.className = "prefix";
+      capPrefix.textContent = "$";
+      var capInput = document.createElement("input");
+      capInput.type = "text";
+      capInput.setAttribute("inputmode", "decimal");
+      capInput.className = "tabular";
+      capInput.placeholder = "Capital";
+      capInput.value = (acc.capital !== null && acc.capital !== undefined) ? String(acc.capital) : "";
+      capInput.addEventListener("input", function(){
+        var v = parseFloat(capInput.value.replace(",", "."));
+        acc.capital = isNaN(v) ? null : v;
+        saveState();
+      });
+      capWrap.appendChild(capPrefix);
+      capWrap.appendChild(capInput);
 
       var delBtn = document.createElement("button");
       delBtn.type = "button";
@@ -978,96 +1088,149 @@
       delBtn.setAttribute("aria-label","Supprimer");
       delBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
       delBtn.addEventListener("click", function(){
-        state.riskPresets.splice(idx,1);
+        state.accounts = state.accounts.filter(function(x){ return x._id !== acc._id; });
+        delete state.riskValuesPercent[acc._id];
+        delete state.riskValuesDollar[acc._id];
+        delete state.accountHistory[acc._id];
         saveState();
-        renderPresetSettings();
-        updatePresetDuplicateWarning();
+        renderAccountSettings();
+        updateAccountDuplicateWarning();
       });
 
-      row.appendChild(input);
-      row.appendChild(unit);
+      row.appendChild(nameInput);
+      row.appendChild(capWrap);
       row.appendChild(delBtn);
       container.appendChild(row);
     });
   }
 
-  function updatePresetDuplicateWarning(){
+  function updateAccountDuplicateWarning(){
     var counts = {};
-    state.riskPresets.forEach(function(p){ counts[p] = (counts[p] || 0) + 1; });
+    state.accounts.forEach(function(a){ var n=(a.name||"").trim(); if(n) counts[n]=(counts[n]||0)+1; });
     var dups = Object.keys(counts).filter(function(k){ return counts[k] > 1; });
-    var el = document.getElementById("preset-settings-error");
+    var el = document.getElementById("account-settings-error");
     if (dups.length > 0) {
-      el.textContent = "Valeur(s) de preset en double : " + dups.join(", ") + "%";
+      el.textContent = "Nom(s) de compte en double : " + dups.join(", ");
       el.style.display = "block";
     } else {
       el.style.display = "none";
     }
   }
 
-  document.getElementById("btn-add-preset").addEventListener("click", function(){
-    var last = state.riskPresets.length ? state.riskPresets[state.riskPresets.length-1] : 0;
-    state.riskPresets.push(Math.round((last + 0.25) * 100) / 100);
+  document.getElementById("btn-add-account").addEventListener("click", function(){
+    var id = "acc" + Date.now() + Math.floor(Math.random()*1000);
+    state.accounts.push({ _id: id, name: "Nouveau compte", capital: null });
     saveState();
-    renderPresetSettings();
-    updatePresetDuplicateWarning();
+    renderAccountSettings();
+    updateAccountDuplicateWarning();
   });
 
-  // ---------- Ecran 2 : Capital ----------
-  var inputBalance = document.getElementById("input-balance");
-  var balanceError = document.getElementById("balance-error");
-
-  function populateBalanceScreen(){
-    inputBalance.value = (state.balance !== null && state.balance !== undefined) ? String(state.balance) : "";
-  }
-
-  inputBalance.addEventListener("input", function(){
-    inputBalance.classList.remove("input-error");
-    balanceError.style.display = "none";
-    var v = parseFloat(inputBalance.value.replace(",", "."));
-    state.balance = isNaN(v) ? null : v;
-    saveState();
-  });
-
-  document.getElementById("btn-balance-next").addEventListener("click", function(){
-    var v = parseFloat((inputBalance.value || "").replace(",", "."));
-    if (isNaN(v) || v <= 0) {
-      inputBalance.classList.add("input-error");
-      balanceError.textContent = "Saisis un capital valide, supérieur à 0.";
-      balanceError.style.display = "block";
-      return;
-    }
-    state.balance = v;
-    saveState();
-    populateRiskScreen();
-    showScreen("screen-risk");
-  });
-
-  // ---------- Ecran 3 : Risque ----------
+  // ---------- Ecran 2 : Risque ----------
   var riskModeSwitch = document.getElementById("risk-mode-switch");
-  var riskPercentBlock = document.getElementById("risk-percent-block");
-  var riskDollarBlock = document.getElementById("risk-dollar-block");
-  var riskPresetGrid = document.getElementById("risk-preset-grid");
-  var inputRiskCustom = document.getElementById("input-risk-custom");
-  var inputRiskDollar = document.getElementById("input-risk-dollar");
+  var riskAccountsContainer = document.getElementById("risk-accounts-container");
+  var riskNoAccounts = document.getElementById("risk-no-accounts");
   var riskWarning = document.getElementById("risk-warning");
   var riskWarningText = document.getElementById("risk-warning-text");
   var riskError = document.getElementById("risk-error");
 
-  function renderRiskPresets(){
-    riskPresetGrid.innerHTML = "";
-    (state.riskPresets || []).forEach(function(p){
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "preset-btn tabular" + (state.riskMode === "percent" && state.riskValue === p ? " selected" : "");
-      btn.textContent = p + "%";
-      btn.addEventListener("click", function(){
-        state.riskValue = p;
-        inputRiskCustom.value = "";
+  function getTopSuggestions(accountId, mode){
+    var hist = state.accountHistory[accountId];
+    if (!hist || !hist[mode] || !hist[mode].length) return [];
+    var arr = hist[mode].slice();
+    arr.sort(function(a,b){
+      if (b.count !== a.count) return b.count - a.count;
+      return b.last - a.last;
+    });
+    return arr.slice(0, SUGGESTIONS_MAX).map(function(x){ return x.value; });
+  }
+
+  function renderRiskAccounts(){
+    riskAccountsContainer.innerHTML = "";
+
+    if (!state.accounts || state.accounts.length === 0) {
+      riskNoAccounts.style.display = "block";
+      return;
+    }
+    riskNoAccounts.style.display = "none";
+
+    var mode = state.riskMode;
+    var valuesMap = mode === "percent" ? state.riskValuesPercent : state.riskValuesDollar;
+
+    state.accounts.forEach(function(acc){
+      var block = document.createElement("div");
+      block.className = "risk-account-block";
+
+      var header = document.createElement("div");
+      header.className = "risk-account-header";
+      var nameEl = document.createElement("span");
+      nameEl.className = "risk-account-name";
+      nameEl.textContent = acc.name || "Compte";
+      header.appendChild(nameEl);
+      if (mode === "percent") {
+        var capEl = document.createElement("span");
+        capEl.className = "risk-account-capital";
+        capEl.textContent = (typeof acc.capital === "number" && acc.capital > 0) ? ("Capital : $" + acc.capital) : "Capital non défini";
+        header.appendChild(capEl);
+      }
+      block.appendChild(header);
+
+      var wrap = document.createElement("div");
+      wrap.className = "input-wrap";
+
+      if (mode === "dollar") {
+        var prefix = document.createElement("span");
+        prefix.className = "prefix";
+        prefix.textContent = "$";
+        wrap.appendChild(prefix);
+      }
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.setAttribute("inputmode", "decimal");
+      input.className = "tabular" + (mode === "dollar" ? " has-prefix" : "");
+      input.placeholder = mode === "percent" ? "Ex: 1" : "Ex: 100";
+      var currentVal = valuesMap[acc._id];
+      input.value = (currentVal !== null && currentVal !== undefined) ? String(currentVal) : "";
+      input.addEventListener("input", function(){
+        var v = parseFloat(input.value.replace(",", "."));
+        valuesMap[acc._id] = isNaN(v) ? null : v;
         saveState();
-        renderRiskPresets();
         updateRiskWarning();
       });
-      riskPresetGrid.appendChild(btn);
+      wrap.appendChild(input);
+
+      if (mode === "percent") {
+        var suffix = document.createElement("span");
+        suffix.className = "prefix";
+        suffix.style.left = "auto";
+        suffix.style.right = "16px";
+        suffix.textContent = "%";
+        wrap.appendChild(suffix);
+      }
+
+      block.appendChild(wrap);
+
+      var suggestions = getTopSuggestions(acc._id, mode);
+      if (suggestions.length > 0) {
+        var chipsWrap = document.createElement("div");
+        chipsWrap.className = "suggestion-chips";
+        suggestions.forEach(function(sVal){
+          var chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = "suggestion-chip tabular";
+          chip.textContent = mode === "percent" ? (sVal + "%") : ("$" + sVal);
+          chip.addEventListener("click", function(){
+            input.value = String(sVal);
+            valuesMap[acc._id] = sVal;
+            saveState();
+            updateRiskWarning();
+          });
+          chipsWrap.appendChild(chip);
+        });
+        block.appendChild(chipsWrap);
+      }
+
+      riskAccountsContainer.appendChild(block);
     });
   }
 
@@ -1076,9 +1239,8 @@
     riskModeSwitch.querySelectorAll(".switch-option").forEach(function(opt){
       opt.classList.toggle("active", opt.getAttribute("data-mode") === mode);
     });
-    riskPercentBlock.style.display = mode === "percent" ? "block" : "none";
-    riskDollarBlock.style.display = mode === "dollar" ? "block" : "none";
     saveState();
+    renderRiskAccounts();
     updateRiskWarning();
   }
 
@@ -1088,54 +1250,46 @@
     });
   });
 
-  inputRiskCustom.addEventListener("input", function(){
-    var v = parseFloat(inputRiskCustom.value.replace(",", "."));
-    if (!isNaN(v)) {
-      state.riskValue = v;
-      saveState();
-      renderRiskPresets();
-      updateRiskWarning();
-    }
-  });
-
-  inputRiskDollar.addEventListener("input", function(){
-    var v = parseFloat(inputRiskDollar.value.replace(",", "."));
-    state.riskValue = isNaN(v) ? null : v;
-    saveState();
-  });
+  document.getElementById("btn-goto-settings-from-risk").addEventListener("click", openSettings);
 
   function updateRiskWarning(){
     riskWarning.style.display = "none";
-    if (state.riskMode === "percent" && typeof state.riskValue === "number" && state.riskValue > 2) {
-      riskWarningText.textContent = "Risque élevé : " + state.riskValue + "% du capital dépasse le seuil de 2%.";
+    if (state.riskMode !== "percent") return;
+    var high = [];
+    state.accounts.forEach(function(acc){
+      var v = state.riskValuesPercent[acc._id];
+      if (typeof v === "number" && !isNaN(v) && v > 2) high.push(acc.name || "Compte");
+    });
+    if (high.length > 0) {
+      riskWarningText.textContent = "Risque élevé (> 2% du capital) sur : " + high.join(", ") + ".";
       riskWarning.style.display = "flex";
     }
   }
 
   function populateRiskScreen(){
-    setRiskMode(state.riskMode || "percent");
-    renderRiskPresets();
-    var isPreset = (state.riskPresets || []).indexOf(state.riskValue) !== -1;
-    inputRiskCustom.value = (state.riskMode === "percent" && !isPreset && state.riskValue) ? String(state.riskValue) : "";
-    inputRiskDollar.value = (state.riskMode === "dollar" && state.riskValue) ? String(state.riskValue) : "";
+    setRiskMode(state.riskMode || "dollar");
     riskError.style.display = "none";
-    updateRiskWarning();
   }
 
   document.getElementById("btn-risk-next").addEventListener("click", function(){
-    var v = state.riskValue;
-    if (state.riskMode === "percent") {
-      if (typeof v !== "number" || isNaN(v) || v <= 0) {
-        riskError.textContent = "Choisis un pourcentage prédéfini ou saisis une valeur personnalisée valide.";
-        riskError.style.display = "block";
-        return;
-      }
-    } else {
-      if (typeof v !== "number" || isNaN(v) || v <= 0) {
-        riskError.textContent = "Saisis un montant en $ valide, supérieur à 0.";
-        riskError.style.display = "block";
-        return;
-      }
+    if (!state.accounts || state.accounts.length === 0) {
+      riskError.textContent = "Ajoute au moins un compte dans les Paramètres.";
+      riskError.style.display = "block";
+      return;
+    }
+    var mode = state.riskMode;
+    var valuesMap = mode === "percent" ? state.riskValuesPercent : state.riskValuesDollar;
+    var hasValid = false;
+    for (var i=0;i<state.accounts.length;i++){
+      var v = valuesMap[state.accounts[i]._id];
+      if (typeof v === "number" && !isNaN(v) && v > 0) { hasValid = true; break; }
+    }
+    if (!hasValid) {
+      riskError.textContent = mode === "percent"
+        ? "Saisis au moins un pourcentage valide, supérieur à 0, pour un compte."
+        : "Saisis au moins un montant en $ valide, supérieur à 0, pour un compte.";
+      riskError.style.display = "block";
+      return;
     }
     riskError.style.display = "none";
     saveState();
@@ -1143,7 +1297,7 @@
     showScreen("screen-sl");
   });
 
-  // ---------- Ecran 4 : Stop Loss ----------
+  // ---------- Ecran 3 : Stop Loss ----------
   var slModeSwitch = document.getElementById("sl-mode-switch");
   var slRawBlock = document.getElementById("sl-raw-block");
   var slEntryExitBlock = document.getElementById("sl-entryexit-block");
@@ -1237,13 +1391,11 @@
     computeAndShowResult();
   });
 
-  // ---------- Ecran 5 : Résultat ----------
+  // ---------- Ecran 4 : Résultat ----------
   var resultErrorBanner = document.getElementById("result-error-banner");
+  var resultSkipBanner = document.getElementById("result-skip-banner");
   var resultBody = document.getElementById("result-body");
   var resultAssetTitle = document.getElementById("result-asset-title");
-  var resultLots = document.getElementById("result-lots");
-  var resultLotsQuarter = document.getElementById("result-lots-quarter");
-  var resultRiskDollars = document.getElementById("result-risk-dollars");
   var resultAssetName = document.getElementById("result-asset-name");
   var resultSlValue = document.getElementById("result-sl-value");
   var resultEntryRow = document.getElementById("result-entry-row");
@@ -1251,12 +1403,30 @@
   var resultExitRow = document.getElementById("result-exit-row");
   var resultExitValue = document.getElementById("result-exit-value");
   var resultFormulaHint = document.getElementById("result-formula-hint");
+  var resultAccountsList = document.getElementById("result-accounts-list");
   var historyToggleBtn = document.getElementById("history-toggle");
   var historyListEl = document.getElementById("history-list");
 
-  function pushHistory(asset, lot, riskDollars){
+  function recordAccountHistory(accountId, mode, value){
+    state.accountHistory[accountId] = state.accountHistory[accountId] || { percent: [], dollar: [] };
+    var arr = state.accountHistory[accountId][mode];
+    var existing = null;
+    for (var i=0;i<arr.length;i++){
+      if (arr[i].value === value) { existing = arr[i]; break; }
+    }
+    if (existing) {
+      existing.count += 1;
+      existing.last = Date.now();
+    } else {
+      arr.push({ value: value, count: 1, last: Date.now() });
+    }
+    arr.sort(function(a,b){ return (b.count - a.count) || (b.last - a.last); });
+    if (arr.length > ACCOUNT_HISTORY_CAP) arr.length = ACCOUNT_HISTORY_CAP;
+  }
+
+  function pushHistory(asset, accountName, lot, riskDollars){
     state.history = state.history || [];
-    state.history.unshift({ asset: asset, lot: lot, riskDollars: riskDollars, ts: Date.now() });
+    state.history.unshift({ asset: asset, account: accountName, lot: lot, riskDollars: riskDollars, ts: Date.now() });
     state.history = state.history.slice(0, HISTORY_MAX);
     saveState();
   }
@@ -1270,7 +1440,7 @@
     hist.forEach(function(h){
       var row = document.createElement("div");
       row.className = "history-row";
-      row.innerHTML = '<span class="h-asset">' + h.asset + '</span><span>' + h.lot.toFixed(2) + ' lots · $' + h.riskDollars.toFixed(2) + '</span>';
+      row.innerHTML = '<span class="h-asset">' + escapeHtml(h.asset) + ' · ' + escapeHtml(h.account || "") + '</span><span>' + h.lot.toFixed(2) + ' lots · $' + h.riskDollars.toFixed(2) + '</span>';
       historyListEl.appendChild(row);
     });
   }
@@ -1281,10 +1451,30 @@
     historyToggleBtn.textContent = (isOpen ? "Masquer l'historique (" : "Voir l'historique (") + hist.length + ")";
   });
 
-  function errorBannerHtml(message){
-    return '<div class="banner error">' +
+  function bannerHtml(message, type){
+    return '<div class="banner ' + type + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>' +
-      '<span>' + message + '</span></div>';
+      '<span>' + escapeHtml(message) + '</span></div>';
+  }
+
+  function renderResultAccounts(results){
+    resultAccountsList.innerHTML = "";
+    var divisor = (typeof state.lotDivisor === "number" && state.lotDivisor > 0) ? state.lotDivisor : 4;
+    results.forEach(function(r){
+      var card = document.createElement("div");
+      card.className = "result-account-card";
+
+      var left = document.createElement("div");
+      left.innerHTML = '<div class="result-account-name">' + escapeHtml(r.accountName) + '</div><div class="result-account-sub">Risque : $' + r.riskDollars.toFixed(2) + '</div>';
+
+      var right = document.createElement("div");
+      right.className = "result-account-lots";
+      right.innerHTML = '<div class="lots-value tabular">' + r.lot.toFixed(2) + '</div><div class="lots-quarter tabular">÷' + divisor + ' → ' + r.lotDivided.toFixed(2) + '</div>';
+
+      card.appendChild(left);
+      card.appendChild(right);
+      resultAccountsList.appendChild(card);
+    });
   }
 
   function computeAndShowResult(){
@@ -1297,19 +1487,9 @@
       return;
     }
 
-    var riskDollars;
-    if (state.riskMode === "percent") {
-      if (typeof state.balance !== "number" || state.balance <= 0 || typeof state.riskValue !== "number" || state.riskValue <= 0) {
-        showResultError("Capital ou pourcentage de risque invalide.");
-        return;
-      }
-      riskDollars = state.balance * (state.riskValue / 100);
-    } else {
-      if (typeof state.riskValue !== "number" || state.riskValue <= 0) {
-        showResultError("Montant de risque en $ invalide.");
-        return;
-      }
-      riskDollars = state.riskValue;
+    if (!specs.value || specs.value <= 0) {
+      showResultError("Valeur du pip invalide pour cet actif (à régler dans Paramètres).");
+      return;
     }
 
     var distanceSL;
@@ -1331,36 +1511,69 @@
       }
     }
 
-    if (!specs.value || specs.value <= 0) {
-      showResultError("Valeur du pip invalide pour cet actif (à régler dans Paramètres).");
-      return;
-    }
-
-    var denom = distanceSL * specs.value;
-    if (!isFinite(denom) || denom <= 0) {
+    var denomBase = distanceSL * specs.value;
+    if (!isFinite(denomBase) || denomBase <= 0) {
       showResultError("Erreur de calcul : dénominateur invalide.");
       return;
     }
 
-    var lot = riskDollars / denom;
-    if (!isFinite(lot) || lot <= 0) {
-      showResultError("Le résultat du calcul est invalide. Vérifie tes valeurs.");
+    var divisor = (typeof state.lotDivisor === "number" && state.lotDivisor > 0) ? state.lotDivisor : 4;
+    var mode = state.riskMode;
+    var valuesMap = mode === "percent" ? state.riskValuesPercent : state.riskValuesDollar;
+
+    var results = [];
+    var skipped = [];
+
+    state.accounts.forEach(function(acc){
+      var v = valuesMap[acc._id];
+      if (typeof v !== "number" || isNaN(v) || v <= 0) return;
+
+      var riskDollars;
+      if (mode === "percent") {
+        if (typeof acc.capital !== "number" || acc.capital <= 0) {
+          skipped.push((acc.name || "Compte") + " (capital non défini)");
+          return;
+        }
+        riskDollars = acc.capital * (v / 100);
+      } else {
+        riskDollars = v;
+      }
+
+      var lot = riskDollars / denomBase;
+      if (!isFinite(lot) || lot <= 0) {
+        skipped.push((acc.name || "Compte") + " (calcul invalide)");
+        return;
+      }
+      lot = Math.round(lot * 100) / 100;
+      if (lot < 0.01) lot = 0.01;
+
+      results.push({
+        accountName: acc.name || "Compte",
+        riskDollars: riskDollars,
+        lot: lot,
+        lotDivided: lot / divisor
+      });
+
+      recordAccountHistory(acc._id, mode, v);
+    });
+
+    if (results.length === 0) {
+      showResultError(skipped.length > 0 ? ("Aucun résultat calculable : " + skipped.join(", ") + ".") : "Saisis au moins une valeur de risque valide pour un compte.");
       return;
     }
-
-    lot = Math.round(lot * 100) / 100;
-    if (lot < 0.01) lot = 0.01;
-
-    var quarterLot = lot / 4;
-    var quarterLotText = quarterLot.toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
-    if (quarterLotText.indexOf(".") === -1) quarterLotText += ".0";
 
     resultErrorBanner.style.display = "none";
     resultErrorBanner.innerHTML = "";
     resultBody.style.display = "block";
-    resultLots.textContent = lot.toFixed(2);
-    resultLotsQuarter.textContent = quarterLotText;
-    resultRiskDollars.textContent = "$" + riskDollars.toFixed(2);
+
+    if (skipped.length > 0) {
+      resultSkipBanner.innerHTML = bannerHtml("Compte(s) ignoré(s) : " + skipped.join(", ") + ".", "warning");
+      resultSkipBanner.style.display = "block";
+    } else {
+      resultSkipBanner.style.display = "none";
+      resultSkipBanner.innerHTML = "";
+    }
+
     resultAssetName.textContent = state.asset;
     resultSlValue.textContent = distanceSL.toString();
 
@@ -1374,17 +1587,24 @@
       resultExitRow.style.display = "none";
     }
 
-    resultFormulaHint.textContent = "Valeur : $" + specs.value + " par pip";
+    resultFormulaHint.textContent = "Valeur : $" + specs.value + " par pip · Diviseur : ÷" + divisor;
 
-    pushHistory(state.asset, lot, riskDollars);
+    renderResultAccounts(results);
+
+    results.forEach(function(r){
+      pushHistory(state.asset, r.accountName, r.lot, r.riskDollars);
+    });
     renderHistory();
 
+    saveState();
     showScreen("screen-result");
   }
 
   function showResultError(message){
     resultBody.style.display = "none";
-    resultErrorBanner.innerHTML = errorBannerHtml(message);
+    resultSkipBanner.style.display = "none";
+    resultSkipBanner.innerHTML = "";
+    resultErrorBanner.innerHTML = bannerHtml(message, "error");
     resultErrorBanner.style.display = "block";
     showScreen("screen-result");
   }
@@ -1399,7 +1619,6 @@
   // ---------- Initialisation ----------
   function init(){
     renderAssetGrid();
-    populateBalanceScreen();
     populateRiskScreen();
     populateSlScreen();
     showScreen("screen-asset");
