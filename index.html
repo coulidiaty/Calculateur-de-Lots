@@ -11,7 +11,6 @@
   :root{
     --bg: #F7F8FA;
     --surface: #FFFFFF;
-    --surface-elevated: #FFFFFF;
     --accent: #3D5AFE;
     --accent-pressed: #2E45D1;
     --text-primary: #111418;
@@ -20,8 +19,6 @@
     --border: #E4E7EC;
     --success: #1BA672;
     --error: #E5484D;
-    --warning: #F2A93B;
-    --success-bg: #E8F7F1;
     --error-bg: #FDEAEA;
     --warning-bg: #FDF3E3;
     --radius-card: 12px;
@@ -39,750 +36,359 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  body{
-    overscroll-behavior-y: contain;
-  }
+  #app{ max-width: 600px; margin: 0 auto; min-height: 100%; }
 
-  .tabular{
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum" 1;
-  }
-
-  #app{
-    max-width: 480px;
-    margin: 0 auto;
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .screen{
-    display: none;
-    flex-direction: column;
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 0 20px 24px;
-    animation: fadeSlide .22s ease;
-  }
-  .screen.active{ display: flex; }
-
-  @keyframes fadeSlide{
-    from{ opacity: 0; transform: translateX(10px); }
-    to{ opacity: 1; transform: translateX(0); }
-  }
+  .screen{ display:none; min-height:100%; flex-direction:column; }
+  .screen.active{ display:flex; }
 
   .topbar{
-    display:flex;
-    align-items:center;
+    display:flex; align-items:center; gap:4px;
+    padding: 8px 8px 0;
     min-height: 56px;
-    padding-top: 8px;
   }
-
-  .back-btn{
-    width:48px; height:48px;
+  .step{
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+    padding: 0 8px;
+  }
+  .icon-btn{
+    width:44px; height:44px;
     display:flex; align-items:center; justify-content:center;
-    background: none; border: none;
-    color: var(--text-primary);
-    border-radius: var(--radius-input);
-    cursor:pointer;
+    background:none; border:none; color: var(--text-primary);
+    border-radius: var(--radius-input); cursor:pointer;
   }
-  .back-btn:active{ background: var(--border); }
-  .back-btn svg{ width:22px; height:22px; }
+  .icon-btn:active{ background: var(--border); }
+  .icon-btn svg{ width:22px; height:22px; }
 
-  .step-indicator{
-    margin-left: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-  }
+  .head{ padding: 8px 14px 20px; }
+  .head h1{ font-size: 26px; font-weight: 700; margin:0; letter-spacing:-.01em; }
+  .head p{ font-size: 14px; color: var(--text-secondary); margin: 6px 0 0; }
 
-  .screen-header{
-    margin-top: 8px;
-    margin-bottom: 24px;
-  }
+  .content{ flex:1; padding: 0 14px 20px; display:flex; flex-direction:column; }
+  .spacer{ flex:1; min-height: 24px; }
+  .actions{ padding-top: 8px; }
 
-  h1.screen-title{
-    font-size: 24px;
-    font-weight: 600;
-    margin: 0 0 4px 0;
-    line-height: 1.25;
-  }
+  .tabular{ font-variant-numeric: tabular-nums; }
 
-  p.screen-subtitle{
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin: 0;
-  }
-
-  .content{
-    flex: 1;
-    display:flex;
-    flex-direction: column;
-  }
-
-  .spacer{ flex: 1; }
-
-  .bottom-actions{
-    padding-top: 24px;
-  }
-
-  /* Asset grid */
-  .asset-grid{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .asset-card{
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-    padding: 16px;
-    min-height: 88px;
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    cursor: pointer;
-    transition: border-color .15s ease, background .15s ease;
-  }
-  .asset-card:active{ background: #F0F1F5; }
-  .asset-card.selected{
-    border-color: var(--accent);
-    background: #EEF1FF;
-  }
-  .asset-symbol{
-    font-size: 18px;
-    font-weight: 600;
-  }
-  .asset-label{
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-  }
-  .asset-card.selected .asset-label{ color: var(--accent); }
-
-  /* Field */
-  .field{
-    margin-bottom: 16px;
-  }
-  .field-label{
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
-    display:block;
-  }
-  .input-wrap{
-    position: relative;
-  }
-  .prefix{
-    position:absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-secondary);
-    font-size: 16px;
-    font-weight: 500;
-    pointer-events:none;
-  }
-  input[type="text"], input[type="number"]{
-    width: 100%;
-    height: 56px;
+  input{
+    width:100%; min-height:52px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-input);
     padding: 0 16px;
-    font-size: 16px;
-    font-family: inherit;
+    font-size: 16px; font-family: inherit;
     color: var(--text-primary);
-    outline: none;
-    transition: border-color .15s ease;
+    outline:none;
   }
-  input.has-prefix{ padding-left: 32px; }
   input:focus{ border-color: var(--accent); }
-  input.input-error{ border-color: var(--error); }
   input::placeholder{ color: var(--text-disabled); }
 
-  /* Switch (pill toggle) */
-  .switch-row{
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-pill);
-    padding: 4px;
-    margin-bottom: 24px;
-    min-height: 48px;
-  }
-  .switch-option{
-    flex: 1;
-    text-align:center;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 10px 8px;
-    border-radius: var(--radius-pill);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: background .15s ease, color .15s ease;
-    user-select: none;
-  }
-  .switch-option.active{
-    background: var(--accent);
-    color: #fff;
-  }
-
-  /* Preset buttons (risk %) */
-  .preset-grid{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-  .preset-btn{
-    min-height: 48px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-input);
-    font-size: 16px;
-    font-weight: 500;
-    font-family: inherit;
-    color: var(--text-primary);
-    cursor: pointer;
-    font-variant-numeric: tabular-nums;
-  }
-  .preset-btn.selected{
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-  }
-
-  .divider-label{
-    text-align:center;
-    font-size: 11px;
-    font-weight: 400;
-    color: var(--text-secondary);
-    margin: 16px 0 12px;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-  }
-
-  /* Primary button */
-  .btn-primary{
-    width: 100%;
-    min-height: 56px;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-card);
-    font-size: 16px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    transition: background .15s ease;
-  }
-  .btn-primary:active{ background: var(--accent-pressed); }
-  .btn-primary:disabled{
-    background: var(--text-disabled);
-    cursor: not-allowed;
-  }
-
-  .btn-secondary{
-    width: 100%;
-    min-height: 48px;
-    background: transparent;
-    color: var(--accent);
-    border: none;
-    font-size: 16px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    margin-top: 8px;
-  }
-
-  /* Banner (error/warning/success) */
-  .banner{
-    display:flex;
-    align-items:flex-start;
-    gap: 8px;
-    padding: 12px 16px;
-    border-radius: var(--radius-input);
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 16px;
-    line-height: 1.4;
-  }
-  .banner.error{ background: var(--error-bg); color: var(--error); }
-  .banner.warning{ background: var(--warning-bg); color: #8a5a13; }
-  .banner.success{ background: var(--success-bg); color: var(--success); }
-  .banner svg{ flex-shrink:0; width:18px; height:18px; margin-top:1px; }
-
-  /* Result screen */
-  .result-card{
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-    padding: 24px 16px;
-    text-align: center;
-    margin-bottom: 16px;
-  }
-  .result-label{
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
-  }
-  .result-value{
-    font-size: 72px;
-    font-weight: 700;
-    line-height: 1.1;
-    color: var(--text-primary);
-  }
-  .result-unit{
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-left: 4px;
-  }
-  .result-sub{
-    display:flex;
-    align-items:baseline;
-    justify-content:center;
-    gap: 6px;
-    margin-top: 16px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-  }
-  .result-sub-label{
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-secondary);
-  }
-  .result-sub-value{
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .detail-row{
-    display:flex;
-    justify-content: space-between;
-    align-items:center;
-    padding: 14px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-input);
-    margin-bottom: 8px;
-  }
-  .detail-row .k{
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-  }
-  .detail-row .v{
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--text-primary);
-  }
-
-  .hint{
-    font-size: 11px;
-    font-weight: 400;
-    color: var(--text-secondary);
-    margin-top: 8px;
-  }
-
-  /* Icon button (gear, etc.) - shares back-btn look */
-  .back-btn, .icon-btn{
-    width:48px; height:48px;
-    display:flex; align-items:center; justify-content:center;
-    background: none; border: none;
-    color: var(--text-primary);
-    border-radius: var(--radius-input);
-    cursor:pointer;
-  }
-  .back-btn:active, .icon-btn:active{ background: var(--border); }
-  .back-btn svg, .icon-btn svg{ width:22px; height:22px; }
-
-  /* Settings screen */
-  .settings-section{ margin-bottom: 28px; }
-  .settings-section-title{
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: .03em;
-  }
-  .settings-section-hint{
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin: -4px 0 12px;
-    line-height: 1.4;
-  }
-  .asset-row, .preset-row, .account-row{
-    display:flex;
-    align-items:center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .asset-row input, .preset-row input, .account-row input{
-    height: 40px;
-    font-size: 14px;
-    padding: 0 10px;
-  }
-  .asset-row .sym-input{ width: 78px; flex-shrink:0; text-transform: uppercase; }
-  .asset-row .label-input{ flex: 1; min-width: 0; }
-  .asset-row .value-input-wrap{ position:relative; width: 84px; flex-shrink:0; }
-  .asset-row .value-input-wrap input{ padding-left: 20px; width:100%; }
-  .asset-row .value-input-wrap .prefix{ left: 8px; font-size: 13px; }
-  .preset-row .preset-input{ width: 70px; flex-shrink:0; }
-  .preset-unit-label{ font-size: 13px; color: var(--text-secondary); flex-shrink:0; }
-
-  .account-row .name-input{ flex:1; min-width:0; }
-  .account-row .capital-input-wrap{ position:relative; width: 112px; flex-shrink:0; }
-  .account-row .capital-input-wrap input{ padding-left: 20px; width:100%; }
-  .account-row .capital-input-wrap .prefix{ left: 8px; font-size: 13px; }
-
-  .row-delete{
-    width: 32px; height: 32px; flex-shrink:0;
-    border:none; background:none;
-    color: var(--text-secondary);
-    cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    border-radius: var(--radius-input);
-  }
-  .row-delete:active{ background: var(--error-bg); color: var(--error); }
-  .btn-add-row{
-    background:none;
-    border:none;
-    color: var(--accent);
-    font-size: 14px;
-    font-weight: 500;
-    font-family: inherit;
-    padding: 4px 0;
-    cursor:pointer;
-  }
-
-  /* Discreet history on result screen */
-  .history-toggle{
+  .field{ margin-bottom: 18px; }
+  .field > label{
     display:block;
-    background:none;
-    border:none;
-    color: var(--accent);
-    font-size: 13px;
-    font-weight: 500;
-    font-family: inherit;
-    padding: 8px 0;
-    cursor:pointer;
-    text-align:left;
-  }
-  .history-list{ display:none; margin-top:2px; }
-  .history-list.open{ display:block; }
-  .history-row{
-    display:flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
+    font-size: 13px; font-weight: 500;
     color: var(--text-secondary);
-  }
-  .history-row:last-child{ border-bottom:none; }
-  .history-row .h-asset{ font-weight:500; color: var(--text-primary); }
-
-  /* Risk screen: per-account blocks */
-  .risk-account-block{ margin-bottom: 22px; }
-  .risk-account-header{
-    display:flex;
-    justify-content: space-between;
-    align-items: baseline;
     margin-bottom: 8px;
-    gap: 8px;
   }
-  .risk-account-name{ font-size: 14px; font-weight: 600; }
-  .risk-account-capital{
-    font-size: 12px;
-    color: var(--text-secondary);
-    text-align: right;
-    flex-shrink:0;
+  .wrap{ position:relative; }
+  .wrap .fix{
+    position:absolute; top:50%; transform:translateY(-50%);
+    left:16px; font-size:16px; color: var(--text-secondary); pointer-events:none;
   }
-  .suggestion-chips{
-    display:flex;
-    gap: 6px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-  }
-  .suggestion-chip{
-    padding: 6px 12px;
-    border-radius: var(--radius-pill);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    font-size: 13px;
-    font-weight: 500;
-    font-family: inherit;
-    color: var(--text-primary);
-    cursor: pointer;
-  }
-  .suggestion-chip:active{ background: #EEF1FF; border-color: var(--accent); color: var(--accent); }
+  .wrap .fix.right{ left:auto; right:16px; }
+  .wrap input.pad-l{ padding-left: 34px; }
 
-  .link-btn{
-    background:none;
-    border:none;
-    color: var(--accent);
-    font-size: 13px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor:pointer;
-    padding: 0;
-    text-decoration: underline;
+  .btn{
+    width:100%; min-height:56px;
+    background: var(--accent); color:#fff;
+    border:none; border-radius: var(--radius-card);
+    font-size:16px; font-weight:600; font-family:inherit; cursor:pointer;
   }
-  .empty-hint{
-    text-align:center;
-    color: var(--text-secondary);
-    font-size: 13px;
-    padding: 24px 8px;
-    line-height: 1.5;
+  .btn:active{ background: var(--accent-pressed); }
+
+  .switch{
+    display:flex; background: var(--surface);
+    border:1px solid var(--border); border-radius: var(--radius-pill);
+    padding:4px; margin-bottom:20px;
+  }
+  .switch div{
+    flex:1; text-align:center; font-size:14px; font-weight:500;
+    padding:10px 8px; border-radius: var(--radius-pill);
+    color: var(--text-secondary); cursor:pointer; user-select:none;
+  }
+  .switch div.on{ background: var(--accent); color:#fff; }
+
+  .err{
+    font-size:13px; color: var(--error);
+    background: var(--error-bg);
+    padding:12px 14px; border-radius: var(--radius-input);
+    margin-bottom:16px; display:none; line-height:1.4;
   }
 
-  /* Result screen: per-account cards */
-  .result-account-card{
+  .asset-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .asset-card{
     background: var(--surface);
-    border: 1px solid var(--border);
+    border:1px solid var(--border);
     border-radius: var(--radius-card);
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    display:flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
+    padding:20px 16px; min-height:76px;
+    display:flex; align-items:center;
+    font-size:17px; font-weight:600;
+    cursor:pointer;
   }
-  .result-account-name{
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 2px;
+  .asset-card:active{ border-color: var(--accent); color: var(--accent); }
+
+  .rblock{ margin-bottom:22px; }
+  .rblock .name{ font-size:14px; font-weight:600; margin-bottom:8px; display:block; }
+  .chips{ display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .chip{
+    padding:7px 14px; border-radius: var(--radius-pill);
+    background: var(--surface); border:1px solid var(--border);
+    font-size:13px; font-weight:500; font-family:inherit;
+    color: var(--text-primary); cursor:pointer;
   }
-  .result-account-sub{
-    font-size: 12px;
-    color: var(--text-secondary);
+  .chip:active{ border-color: var(--accent); color: var(--accent); }
+
+  .rcard{
+    background: var(--surface);
+    border:1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding:18px 16px; margin-bottom:12px;
   }
-  .result-account-lots{ text-align: right; flex-shrink:0; }
-  .result-account-lots .lots-value{
-    font-size: 47px;
-    font-weight: 700;
-    line-height: 1.1;
+  .rcard-top{ display:flex; align-items:center; gap:8px; margin-bottom:2px; }
+  .rcard-account{ font-size:14px; font-weight:600; }
+  .tag{
+    font-size:10px; font-weight:600;
+    padding:3px 8px; border-radius: var(--radius-pill);
+    background: var(--warning-bg); color:#8a5a13;
   }
-  .result-account-lots .lots-quarter{
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 4px;
+  .lot{ display:flex; align-items:baseline; justify-content:center; gap:8px; margin:14px 0 18px; }
+  .lot b{ font-size:52px; font-weight:700; line-height:1; letter-spacing:-.02em; }
+  .lot span{ font-size:15px; font-weight:500; color: var(--text-secondary); }
+  .rrow{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:14px;
+  }
+  .rrow.sub{ font-size:12px; color: var(--text-secondary); margin-top:3px; }
+  .rrow .k{ color: var(--text-secondary); }
+  .rrow.sub .k{ color: var(--text-disabled); }
+  .rrow b{ font-weight:600; }
+  .rdiv{
+    margin-top:12px; padding-top:12px;
+    border-top:1px solid var(--border);
+    font-size:14px; color: var(--text-secondary);
+    display:flex; justify-content:space-between;
+  }
+  .rdiv b{ color: var(--text-primary); font-weight:600; }
+
+  .note{ font-size:12px; color: var(--text-secondary); margin-top:4px; line-height:1.5; }
+
+  .hist-btn{
+    background:none; border:none; padding:14px 0 6px;
+    color: var(--accent); font-size:13px; font-weight:500;
+    font-family:inherit; cursor:pointer; text-align:left;
+  }
+  .hist{ display:none; }
+  .hist.open{ display:block; }
+  .hist-row{
+    display:flex; justify-content:space-between; gap:12px;
+    padding:8px 0; border-bottom:1px solid var(--border);
+    font-size:13px; color: var(--text-secondary);
+  }
+  .hist-row:last-child{ border-bottom:none; }
+  .hist-row b{ color: var(--text-primary); font-weight:500; }
+
+  .sect{ margin-bottom:28px; }
+  .sect-title{
+    font-size:12px; font-weight:600; color: var(--text-secondary);
+    text-transform:uppercase; letter-spacing:.04em; margin-bottom:12px;
+  }
+
+  .opt{
+    display:flex; align-items:center; justify-content:space-between;
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: var(--radius-input);
+    padding:14px 16px; margin-bottom:8px;
+    font-size:15px; font-weight:500;
+  }
+  .tgl{
+    width:48px; height:28px; flex-shrink:0;
+    background: var(--border); border:none; border-radius: var(--radius-pill);
+    position:relative; cursor:pointer; transition: background .15s ease;
+  }
+  .tgl::after{
+    content:""; position:absolute; top:3px; left:3px;
+    width:22px; height:22px; border-radius:50%;
+    background:#fff; transition: transform .15s ease;
+  }
+  .tgl.on{ background: var(--accent); }
+  .tgl.on::after{ transform: translateX(20px); }
+
+  .subopt{ display:none; margin:0 0 8px; align-items:center; gap:8px; }
+  .subopt.show{ display:flex; }
+  .subopt input{ width:80px; min-height:44px; text-align:center; }
+  .subopt .chip{ min-height:44px; padding:0 16px; display:flex; align-items:center; }
+  .subopt .chip.on{ background: var(--accent); border-color: var(--accent); color:#fff; }
+
+  .card{
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: var(--radius-card); padding:12px; margin-bottom:8px;
+  }
+  .row{ display:flex; align-items:center; gap:8px; }
+  .row input{ min-height:42px; font-size:14px; padding:0 12px; }
+  .row .grow{ flex:1; min-width:0; }
+  .row .cap{ position:relative; width:110px; flex-shrink:0; }
+  .row .cap input{ padding-left:26px; }
+  .row .cap .fix{ left:12px; font-size:14px; }
+  .row .sym{ flex:1; min-width:0; text-transform:uppercase; font-weight:600; }
+
+  .mini{
+    width:36px; height:36px; flex-shrink:0;
+    border:none; background:none; color: var(--text-secondary);
+    border-radius: var(--radius-input); cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px;
+  }
+  .mini:active{ background: var(--border); color: var(--text-primary); }
+  .mini.del:active{ background: var(--error-bg); color: var(--error); }
+  .mini svg{ width:18px; height:18px; }
+
+  .vrow{
+    display:flex; align-items:center; gap:8px;
+    padding-top:8px; margin-top:8px;
+    border-top:1px solid var(--border);
+  }
+  .vrow .lab{ flex:1; min-width:0; font-size:13px; color: var(--text-secondary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .vrow .money{ position:relative; width:92px; flex-shrink:0; }
+  .vrow .money input{ min-height:42px; font-size:14px; padding:0 10px 0 24px; }
+  .vrow .money .fix{ left:10px; font-size:13px; }
+  .vrow .money.comm{ display:none; }
+  .vrow .money.comm.show{ display:block; }
+
+  .add{
+    background:none; border:none; color: var(--accent);
+    font-size:14px; font-weight:500; font-family:inherit;
+    padding:6px 0; cursor:pointer;
   }
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- ECRAN 1 : ACTIF -->
-  <section class="screen" id="screen-asset">
+  <section class="screen" id="s-asset">
     <div class="topbar">
-      <span class="step-indicator">Étape 1 / 4</span>
-      <button class="icon-btn" id="btn-open-settings" aria-label="Paramètres" style="margin-left:auto;">
+      <span class="step">Étape 1 / 3</span>
+      <button class="icon-btn" id="go-settings" aria-label="Paramètres" style="margin-left:auto;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
-    <div class="screen-header">
-      <h1 class="screen-title">Choisis ton actif</h1>
-      <p class="screen-subtitle">La sélection passe automatiquement à l'étape suivante</p>
-    </div>
+    <div class="head"><h1>Actif</h1></div>
     <div class="content">
       <div class="asset-grid" id="asset-grid"></div>
+      <div class="note" id="asset-empty" style="display:none;">Aucun actif. Ajoute-en un dans les Paramètres.</div>
     </div>
   </section>
 
-  <!-- ECRAN PARAMETRES -->
-  <section class="screen" id="screen-settings">
+  <section class="screen" id="s-risk">
     <div class="topbar">
-      <button class="back-btn" id="btn-settings-back" data-back="screen-asset" aria-label="Retour">
+      <button class="icon-btn back" data-to="s-asset" aria-label="Retour">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <span class="step-indicator">Paramètres</span>
+      <span class="step">Étape 2 / 3</span>
     </div>
-    <div class="screen-header">
-      <h1 class="screen-title">Paramètres</h1>
-      <p class="screen-subtitle">Personnalise tes comptes, ton diviseur et tes actifs</p>
+    <div class="head"><h1>Risque</h1></div>
+    <div class="content">
+      <div class="switch" id="risk-switch">
+        <div data-mode="dollar">$</div>
+        <div data-mode="percent">%</div>
+      </div>
+      <div id="risk-list"></div>
+      <div class="err" id="risk-err"></div>
+      <div class="spacer"></div>
+      <div class="actions"><button class="btn" id="risk-next">Suivant</button></div>
+    </div>
+  </section>
+
+  <section class="screen" id="s-stop">
+    <div class="topbar">
+      <button class="icon-btn back" data-to="s-risk" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="step">Étape 3 / 3</span>
+    </div>
+    <div class="head">
+      <h1>Stop</h1>
+      <p>Le chiffre lu sur TradingView</p>
     </div>
     <div class="content">
+      <div class="field">
+        <input class="tabular" type="text" inputmode="decimal" id="stop-input" placeholder="537">
+      </div>
+      <div class="err" id="stop-err"></div>
+      <div class="spacer"></div>
+      <div class="actions"><button class="btn" id="stop-next">Calculer</button></div>
+    </div>
+  </section>
 
-      <div class="settings-section">
-        <div class="settings-section-title">Diviseur de lots</div>
-        <div class="input-wrap">
-          <input class="tabular" type="text" inputmode="decimal" id="input-lot-divisor" placeholder="4">
-          <span class="prefix" style="left:auto; right:16px;">÷</span>
+  <section class="screen" id="s-result">
+    <div class="topbar">
+      <button class="icon-btn back" data-to="s-stop" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+    </div>
+    <div class="head"><h1 id="result-title">—</h1></div>
+    <div class="content">
+      <div class="err" id="result-err"></div>
+      <div id="result-list"></div>
+      <div class="note" id="result-note" style="display:none;"></div>
+      <button class="hist-btn" id="hist-btn" style="display:none;"></button>
+      <div class="hist" id="hist-list"></div>
+      <div class="spacer"></div>
+      <div class="actions"><button class="btn" id="new-calc">Nouveau calcul</button></div>
+    </div>
+  </section>
+
+  <section class="screen" id="s-settings">
+    <div class="topbar">
+      <button class="icon-btn back" data-to="s-asset" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+    </div>
+    <div class="head"><h1>Paramètres</h1></div>
+    <div class="content">
+
+      <div class="sect">
+        <div class="sect-title">Options</div>
+        <div class="opt">
+          <span>Diviseur de lots</span>
+          <button class="tgl" id="tgl-div" role="switch" aria-label="Diviseur de lots"></button>
         </div>
-        <div class="hint">Le nombre de lots calculé sera aussi affiché divisé par cette valeur.</div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-section-title">Comptes</div>
-        <div class="settings-section-hint">Chaque compte définit un champ de risque sur l'écran 2. Le capital sert au calcul en mode "% du capital".</div>
-        <div id="settings-account-list"></div>
-        <button type="button" class="btn-add-row" id="btn-add-account">+ Ajouter un compte</button>
-        <div class="hint" id="account-settings-error" style="color:var(--error); display:none;"></div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-section-title">Actifs</div>
-        <div id="settings-asset-list"></div>
-        <button type="button" class="btn-add-row" id="btn-add-asset">+ Ajouter un actif</button>
-        <div class="hint" id="asset-settings-error" style="color:var(--error); display:none;"></div>
-      </div>
-
-      <div class="spacer"></div>
-    </div>
-  </section>
-
-  <!-- ECRAN 2 : RISQUE -->
-  <section class="screen" id="screen-risk">
-    <div class="topbar">
-      <button class="back-btn" data-back="screen-asset" aria-label="Retour">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <span class="step-indicator">Étape 2 / 4</span>
-    </div>
-    <div class="screen-header">
-      <h1 class="screen-title">Risque accepté</h1>
-      <p class="screen-subtitle">Une valeur par compte : les champs vides sont ignorés</p>
-    </div>
-    <div class="content">
-      <div class="switch-row" id="risk-mode-switch">
-        <div class="switch-option" data-mode="dollar">Montant $ fixe</div>
-        <div class="switch-option" data-mode="percent">% du capital</div>
-      </div>
-
-      <div id="risk-accounts-container"></div>
-
-      <div class="empty-hint" id="risk-no-accounts" style="display:none;">
-        Aucun compte configuré.<br>
-        <button type="button" class="link-btn" id="btn-goto-settings-from-risk">Ajouter un compte dans les Paramètres</button>
-      </div>
-
-      <div class="banner warning" id="risk-warning" style="display:none;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.18 14.18A2 2 0 0 0 3.9 21h16.2a2 2 0 0 0 1.79-2.96L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-        <span id="risk-warning-text">Risque élevé.</span>
-      </div>
-
-      <div class="hint" id="risk-error" style="color:var(--error); display:none;"></div>
-
-      <div class="spacer"></div>
-      <div class="bottom-actions">
-        <button class="btn-primary" id="btn-risk-next">Suivant</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ECRAN 3 : STOP LOSS -->
-  <section class="screen" id="screen-sl">
-    <div class="topbar">
-      <button class="back-btn" data-back="screen-risk" aria-label="Retour">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <span class="step-indicator">Étape 3 / 4</span>
-    </div>
-    <div class="screen-header">
-      <h1 class="screen-title">Stop Loss</h1>
-      <p class="screen-subtitle">Distance de prix jusqu'à ton stop loss</p>
-    </div>
-    <div class="content">
-      <div class="switch-row" id="sl-mode-switch">
-        <div class="switch-option" data-mode="raw">Distance brute</div>
-        <div class="switch-option" data-mode="entryExit">Entrée + Sortie</div>
-      </div>
-
-      <div id="sl-raw-block">
-        <div class="field">
-          <label class="field-label" for="input-sl-raw">Distance de prix (SL)</label>
-          <div class="input-wrap">
-            <input class="tabular" type="text" inputmode="decimal" id="input-sl-raw" placeholder="Ex: 0.0025">
+        <div class="subopt" id="div-sub">
+          <div class="wrap" style="width:80px;">
+            <input class="tabular" type="text" inputmode="decimal" id="div-input">
           </div>
+          <button class="chip" data-div="2">2</button>
+          <button class="chip" data-div="3">3</button>
+          <button class="chip" data-div="4">4</button>
+        </div>
+        <div class="opt">
+          <span>Commissions</span>
+          <button class="tgl" id="tgl-comm" role="switch" aria-label="Commissions"></button>
         </div>
       </div>
 
-      <div id="sl-entryexit-block" style="display:none;">
-        <div class="field">
-          <label class="field-label" for="input-entry">Prix d'entrée</label>
-          <div class="input-wrap">
-            <input class="tabular" type="text" inputmode="decimal" id="input-entry" placeholder="Ex: 1.0850">
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-label" for="input-exit">Prix de sortie (SL)</label>
-          <div class="input-wrap">
-            <input class="tabular" type="text" inputmode="decimal" id="input-exit" placeholder="Ex: 1.0825">
-          </div>
-        </div>
-        <div class="detail-row">
-          <span class="k">Distance calculée</span>
-          <span class="v tabular" id="sl-computed-distance">—</span>
-        </div>
+      <div class="sect">
+        <div class="sect-title">Comptes</div>
+        <div id="acc-list"></div>
+        <button class="add" id="add-acc">+ Ajouter un compte</button>
       </div>
 
-      <div class="hint" id="sl-error" style="color:var(--error); display:none;"></div>
-
-      <div class="spacer"></div>
-      <div class="bottom-actions">
-        <button class="btn-primary" id="btn-sl-next">Calculer</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ECRAN 4 : RESULTAT -->
-  <section class="screen" id="screen-result">
-    <div class="topbar">
-      <button class="back-btn" data-back="screen-sl" aria-label="Retour">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <span class="step-indicator">Résultat</span>
-    </div>
-    <div class="screen-header">
-      <h1 class="screen-title" id="result-asset-title">—</h1>
-      <p class="screen-subtitle">Taille de position par compte</p>
-    </div>
-    <div class="content">
-      <div id="result-error-banner" style="display:none;"></div>
-      <div id="result-skip-banner" style="display:none;"></div>
-
-      <div id="result-body" style="display:none;">
-        <div class="detail-row">
-          <span class="k">Actif</span>
-          <span class="v" id="result-asset-name">—</span>
-        </div>
-        <div class="detail-row">
-          <span class="k">Stop Loss</span>
-          <span class="v tabular" id="result-sl-value">—</span>
-        </div>
-        <div class="detail-row" id="result-entry-row" style="display:none;">
-          <span class="k">Entrée</span>
-          <span class="v tabular" id="result-entry-value">—</span>
-        </div>
-        <div class="detail-row" id="result-exit-row" style="display:none;">
-          <span class="k">Sortie</span>
-          <span class="v tabular" id="result-exit-value">—</span>
-        </div>
-        <div class="hint" id="result-formula-hint"></div>
-
-        <div id="result-accounts-list" style="margin-top:16px;"></div>
-
-        <button type="button" class="history-toggle" id="history-toggle" style="display:none;">Voir l'historique (0)</button>
-        <div class="history-list" id="history-list"></div>
+      <div class="sect">
+        <div class="sect-title">Actifs — valeur d'1 unité TradingView, pour 1 lot</div>
+        <div id="ast-list"></div>
+        <button class="add" id="add-ast">+ Ajouter un actif</button>
       </div>
 
       <div class="spacer"></div>
-      <div class="bottom-actions">
-        <button class="btn-primary" id="btn-new-calc">Nouveau calcul</button>
-      </div>
     </div>
   </section>
 
@@ -792,839 +398,698 @@
 (function(){
   "use strict";
 
-  var STORAGE_KEY = "positionSizeCalculatorConfig";
+  var KEY = "lotCalc.v2";
+  var HIST_MAX = 5;
+  var CHIPS_MAX = 3;
 
-  var DEFAULT_ASSETS = [
-    { _id: "a1", symbol: "EURUSD", label: "Forex",    value: 10 },
-    { _id: "a2", symbol: "BTCUSD", label: "Crypto",   value: 1  },
-    { _id: "a3", symbol: "SPX500", label: "Indice",   value: 1  },
-    { _id: "a4", symbol: "USOIL",  label: "Matières", value: 1  },
-    { _id: "a5", symbol: "XAUUSD", label: "Métal",    value: 1  }
-  ];
-
-  var DEFAULT_ACCOUNTS = [
-    { _id: "acc1", name: "Compte 1", capital: null }
-  ];
-
-  var HISTORY_MAX = 5;
-  var SUGGESTIONS_MAX = 3;
-  var ACCOUNT_HISTORY_CAP = 10;
-
-  var DEFAULT_STATE = {
-    asset: null,
-    lotDivisor: 4,
-    accounts: DEFAULT_ACCOUNTS,
+  var DEFAULTS = {
+    assets: [
+      { id:"as1", symbol:"EURUSD" },
+      { id:"as2", symbol:"BTCUSD" },
+      { id:"as3", symbol:"SP500" },
+      { id:"as4", symbol:"WTICOUSD" }
+    ],
+    accounts: [
+      { id:"ac1", name:"Broker 1", capital:null },
+      { id:"ac2", name:"Broker 2", capital:null }
+    ],
+    values: {},
+    commissions: {},
+    divisorOn: false,
+    divisor: 2,
+    commissionsOn: false,
     riskMode: "dollar",
-    riskValuesPercent: {},
-    riskValuesDollar: {},
-    accountHistory: {},
-    slMode: "raw",
-    slValue: null,
-    entryPrice: null,
-    exitPrice: null,
-    assets: DEFAULT_ASSETS,
+    risk: { dollar:{}, percent:{} },
+    memory: {},
+    assetId: null,
+    stop: null,
     history: []
   };
 
-  var state = loadState();
+  var state = load();
 
-  function loadState(){
+  function load(){
+    var base = JSON.parse(JSON.stringify(DEFAULTS));
     try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
-      var parsed = JSON.parse(raw);
-      var merged = JSON.parse(JSON.stringify(DEFAULT_STATE));
-      for (var k in merged) {
-        if (parsed.hasOwnProperty(k) && parsed[k] !== undefined) merged[k] = parsed[k];
-      }
-      if (!merged.assets || !Array.isArray(merged.assets) || merged.assets.length === 0) {
-        merged.assets = JSON.parse(JSON.stringify(DEFAULT_ASSETS));
-      }
-      if (!merged.accounts || !Array.isArray(merged.accounts)) {
-        merged.accounts = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
-      }
-      if (typeof merged.lotDivisor !== "number" || isNaN(merged.lotDivisor) || merged.lotDivisor <= 0) {
-        merged.lotDivisor = 4;
-      }
-      if (merged.riskMode !== "percent" && merged.riskMode !== "dollar") {
-        merged.riskMode = "dollar";
-      }
-      if (!merged.riskValuesPercent || typeof merged.riskValuesPercent !== "object") {
-        merged.riskValuesPercent = {};
-      }
-      if (!merged.riskValuesDollar || typeof merged.riskValuesDollar !== "object") {
-        merged.riskValuesDollar = {};
-      }
-      if (!merged.accountHistory || typeof merged.accountHistory !== "object") {
-        merged.accountHistory = {};
-      }
-      if (!merged.history || !Array.isArray(merged.history)) {
-        merged.history = [];
-      }
-      return merged;
-    } catch(e){
-      return JSON.parse(JSON.stringify(DEFAULT_STATE));
-    }
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return base;
+      var p = JSON.parse(raw);
+      for (var k in base) if (p.hasOwnProperty(k) && p[k] !== undefined && p[k] !== null) base[k] = p[k];
+    } catch(e){ return JSON.parse(JSON.stringify(DEFAULTS)); }
+
+    if (!Array.isArray(base.assets)) base.assets = [];
+    if (!Array.isArray(base.accounts)) base.accounts = [];
+    if (!Array.isArray(base.history)) base.history = [];
+    if (typeof base.values !== "object") base.values = {};
+    if (typeof base.commissions !== "object") base.commissions = {};
+    if (typeof base.memory !== "object") base.memory = {};
+    if (!base.risk || typeof base.risk !== "object") base.risk = { dollar:{}, percent:{} };
+    if (typeof base.risk.dollar !== "object") base.risk.dollar = {};
+    if (typeof base.risk.percent !== "object") base.risk.percent = {};
+    if (base.riskMode !== "percent") base.riskMode = "dollar";
+    if (!(base.divisor > 0)) base.divisor = 2;
+    return base;
   }
 
-  function findAsset(symbol){
-    for (var i=0;i<state.assets.length;i++){
-      if (state.assets[i].symbol === symbol) return state.assets[i];
-    }
+  function save(){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  function el(id){ return document.getElementById(id); }
+  function uid(p){ return p + Date.now().toString(36) + Math.floor(Math.random()*1000).toString(36); }
+  function num(v){ var n = parseFloat(String(v).replace(",", ".")); return isNaN(n) ? null : n; }
+  function cell(a, b){ return a + "|" + b; }
+
+  function fmt(n, dec){
+    if (typeof n !== "number" || !isFinite(n)) return "—";
+    var s = n.toFixed(typeof dec === "number" ? dec : 6);
+    if (s.indexOf(".") !== -1) s = s.replace(/0+$/, "").replace(/\.$/, "");
+    return s;
+  }
+  function usd(n){ return "$" + n.toFixed(2); }
+  function pct(n){ return n.toFixed(2).replace(/\.?0+$/, "") + " %"; }
+
+  function getAsset(id){
+    for (var i=0;i<state.assets.length;i++) if (state.assets[i].id === id) return state.assets[i];
     return null;
   }
 
-  function saveState(){
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch(e){
-      // localStorage indisponible (mode privé, quota...) : on continue sans planter
-      console.warn("Impossible de sauvegarder la configuration :", e);
-    }
-  }
-
-  function escapeHtml(str){
-    var div = document.createElement("div");
-    div.textContent = str == null ? "" : String(str);
-    return div.innerHTML;
-  }
-
-  // ---------- Navigation ----------
-  var screens = ["screen-asset","screen-settings","screen-risk","screen-sl","screen-result"];
-
-  function showScreen(id){
-    for (var i=0;i<screens.length;i++){
-      document.getElementById(screens[i]).classList.toggle("active", screens[i]===id);
-    }
+  function show(id){
+    ["s-asset","s-risk","s-stop","s-result","s-settings"].forEach(function(s){
+      el(s).classList.toggle("active", s === id);
+    });
     window.scrollTo(0,0);
   }
 
-  document.querySelectorAll(".back-btn").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      showScreen(btn.getAttribute("data-back"));
+  document.querySelectorAll(".back").forEach(function(b){
+    b.addEventListener("click", function(){
+      var to = b.getAttribute("data-to");
+      if (to === "s-asset") renderAssets();
+      show(to);
     });
   });
 
-  // ---------- Ecran 1 : Actif ----------
-  var assetGrid = document.getElementById("asset-grid");
-  function renderAssetGrid(){
-    assetGrid.innerHTML = "";
+  /* ---------- Écran 1 : actif ---------- */
+
+  function renderAssets(){
+    var g = el("asset-grid");
+    g.innerHTML = "";
+    el("asset-empty").style.display = state.assets.length ? "none" : "block";
     state.assets.forEach(function(a){
-      var card = document.createElement("div");
-      card.className = "asset-card" + (state.asset === a.symbol ? " selected" : "");
-      card.setAttribute("role","button");
-      card.innerHTML = '<div class="asset-symbol">'+escapeHtml(a.symbol)+'</div><div class="asset-label">'+escapeHtml(a.label || "")+'</div>';
-      card.addEventListener("click", function(){
-        state.asset = a.symbol;
-        saveState();
-        renderAssetGrid();
-        populateRiskScreen();
-        showScreen("screen-risk");
+      var c = document.createElement("div");
+      c.className = "asset-card";
+      c.textContent = a.symbol || "—";
+      c.addEventListener("click", function(){
+        state.assetId = a.id;
+        save();
+        renderRisk();
+        show("s-risk");
       });
-      assetGrid.appendChild(card);
+      g.appendChild(c);
     });
   }
 
-  function openSettings(){
-    populateLotDivisor();
-    renderAssetSettings();
-    updateAssetDuplicateWarning();
-    renderAccountSettings();
-    updateAccountDuplicateWarning();
-    showScreen("screen-settings");
+  /* ---------- Écran 2 : risque ---------- */
+
+  function memoryFor(accId, mode){
+    var m = state.memory[accId];
+    if (!m || !m[mode]) return [];
+    return m[mode].slice()
+      .sort(function(a,b){ return (b.count - a.count) || (b.last - a.last); })
+      .slice(0, CHIPS_MAX)
+      .map(function(x){ return x.value; });
   }
 
-  document.getElementById("btn-open-settings").addEventListener("click", openSettings);
-
-  document.getElementById("btn-settings-back").addEventListener("click", function(){
-    renderAssetGrid();
-    populateRiskScreen();
-  });
-
-  // ---------- Ecran Paramètres : Diviseur de lots ----------
-  var inputLotDivisor = document.getElementById("input-lot-divisor");
-
-  function populateLotDivisor(){
-    inputLotDivisor.value = (typeof state.lotDivisor === "number" && !isNaN(state.lotDivisor)) ? String(state.lotDivisor) : "4";
+  function remember(accId, mode, value){
+    state.memory[accId] = state.memory[accId] || { dollar:[], percent:[] };
+    var arr = state.memory[accId][mode] = state.memory[accId][mode] || [];
+    var hit = null;
+    for (var i=0;i<arr.length;i++) if (arr[i].value === value) hit = arr[i];
+    if (hit){ hit.count++; hit.last = Date.now(); }
+    else arr.push({ value: value, count: 1, last: Date.now() });
+    arr.sort(function(a,b){ return (b.count - a.count) || (b.last - a.last); });
+    if (arr.length > 10) arr.length = 10;
   }
 
-  inputLotDivisor.addEventListener("input", function(){
-    var v = parseFloat(inputLotDivisor.value.replace(",", "."));
-    if (!isNaN(v) && v > 0) {
-      state.lotDivisor = v;
-      saveState();
-    }
-  });
-
-  // ---------- Ecran Paramètres : Actifs ----------
-  function renderAssetSettings(){
-    var container = document.getElementById("settings-asset-list");
-    container.innerHTML = "";
-    state.assets.forEach(function(a){
-      var row = document.createElement("div");
-      row.className = "asset-row";
-
-      var symInput = document.createElement("input");
-      symInput.type = "text";
-      symInput.className = "sym-input tabular";
-      symInput.value = a.symbol || "";
-      symInput.maxLength = 12;
-      symInput.addEventListener("input", function(){
-        a.symbol = symInput.value.toUpperCase();
-        saveState();
-        updateAssetDuplicateWarning();
-      });
-
-      var labelInput = document.createElement("input");
-      labelInput.type = "text";
-      labelInput.className = "label-input";
-      labelInput.value = a.label || "";
-      labelInput.placeholder = "Libellé";
-      labelInput.addEventListener("input", function(){
-        a.label = labelInput.value;
-        saveState();
-      });
-
-      var valueWrap = document.createElement("div");
-      valueWrap.className = "value-input-wrap";
-      var valuePrefix = document.createElement("span");
-      valuePrefix.className = "prefix";
-      valuePrefix.textContent = "$";
-      var valueInput = document.createElement("input");
-      valueInput.type = "text";
-      valueInput.setAttribute("inputmode", "decimal");
-      valueInput.className = "tabular";
-      valueInput.value = (a.value !== null && a.value !== undefined) ? String(a.value) : "";
-      valueInput.addEventListener("input", function(){
-        var v = parseFloat(valueInput.value.replace(",", "."));
-        a.value = isNaN(v) ? null : v;
-        saveState();
-      });
-      valueWrap.appendChild(valuePrefix);
-      valueWrap.appendChild(valueInput);
-
-      var delBtn = document.createElement("button");
-      delBtn.type = "button";
-      delBtn.className = "row-delete";
-      delBtn.setAttribute("aria-label","Supprimer");
-      delBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
-      delBtn.addEventListener("click", function(){
-        state.assets = state.assets.filter(function(x){ return x._id !== a._id; });
-        if (state.asset === a.symbol) state.asset = null;
-        saveState();
-        renderAssetSettings();
-        updateAssetDuplicateWarning();
-      });
-
-      row.appendChild(symInput);
-      row.appendChild(labelInput);
-      row.appendChild(valueWrap);
-      row.appendChild(delBtn);
-      container.appendChild(row);
-    });
-  }
-
-  function updateAssetDuplicateWarning(){
-    var counts = {};
-    state.assets.forEach(function(a){ var s=(a.symbol||"").trim(); if(s) counts[s]=(counts[s]||0)+1; });
-    var dups = Object.keys(counts).filter(function(k){ return counts[k] > 1; });
-    var el = document.getElementById("asset-settings-error");
-    if (dups.length > 0) {
-      el.textContent = "Symbole(s) en double : " + dups.join(", ");
-      el.style.display = "block";
-    } else {
-      el.style.display = "none";
-    }
-  }
-
-  document.getElementById("btn-add-asset").addEventListener("click", function(){
-    state.assets.push({ _id: "a" + Date.now() + Math.floor(Math.random()*1000), symbol: "NOUVEAU", label: "", value: 1 });
-    saveState();
-    renderAssetSettings();
-    updateAssetDuplicateWarning();
-  });
-
-  // ---------- Ecran Paramètres : Comptes ----------
-  function renderAccountSettings(){
-    var container = document.getElementById("settings-account-list");
-    container.innerHTML = "";
-    state.accounts.forEach(function(acc){
-      var row = document.createElement("div");
-      row.className = "account-row";
-
-      var nameInput = document.createElement("input");
-      nameInput.type = "text";
-      nameInput.className = "name-input";
-      nameInput.value = acc.name || "";
-      nameInput.placeholder = "Nom du compte";
-      nameInput.addEventListener("input", function(){
-        acc.name = nameInput.value;
-        saveState();
-        updateAccountDuplicateWarning();
-      });
-
-      var capWrap = document.createElement("div");
-      capWrap.className = "capital-input-wrap";
-      var capPrefix = document.createElement("span");
-      capPrefix.className = "prefix";
-      capPrefix.textContent = "$";
-      var capInput = document.createElement("input");
-      capInput.type = "text";
-      capInput.setAttribute("inputmode", "decimal");
-      capInput.className = "tabular";
-      capInput.placeholder = "Capital";
-      capInput.value = (acc.capital !== null && acc.capital !== undefined) ? String(acc.capital) : "";
-      capInput.addEventListener("input", function(){
-        var v = parseFloat(capInput.value.replace(",", "."));
-        acc.capital = isNaN(v) ? null : v;
-        saveState();
-      });
-      capWrap.appendChild(capPrefix);
-      capWrap.appendChild(capInput);
-
-      var delBtn = document.createElement("button");
-      delBtn.type = "button";
-      delBtn.className = "row-delete";
-      delBtn.setAttribute("aria-label","Supprimer");
-      delBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
-      delBtn.addEventListener("click", function(){
-        state.accounts = state.accounts.filter(function(x){ return x._id !== acc._id; });
-        delete state.riskValuesPercent[acc._id];
-        delete state.riskValuesDollar[acc._id];
-        delete state.accountHistory[acc._id];
-        saveState();
-        renderAccountSettings();
-        updateAccountDuplicateWarning();
-      });
-
-      row.appendChild(nameInput);
-      row.appendChild(capWrap);
-      row.appendChild(delBtn);
-      container.appendChild(row);
-    });
-  }
-
-  function updateAccountDuplicateWarning(){
-    var counts = {};
-    state.accounts.forEach(function(a){ var n=(a.name||"").trim(); if(n) counts[n]=(counts[n]||0)+1; });
-    var dups = Object.keys(counts).filter(function(k){ return counts[k] > 1; });
-    var el = document.getElementById("account-settings-error");
-    if (dups.length > 0) {
-      el.textContent = "Nom(s) de compte en double : " + dups.join(", ");
-      el.style.display = "block";
-    } else {
-      el.style.display = "none";
-    }
-  }
-
-  document.getElementById("btn-add-account").addEventListener("click", function(){
-    var id = "acc" + Date.now() + Math.floor(Math.random()*1000);
-    state.accounts.push({ _id: id, name: "Nouveau compte", capital: null });
-    saveState();
-    renderAccountSettings();
-    updateAccountDuplicateWarning();
-  });
-
-  // ---------- Ecran 2 : Risque ----------
-  var riskModeSwitch = document.getElementById("risk-mode-switch");
-  var riskAccountsContainer = document.getElementById("risk-accounts-container");
-  var riskNoAccounts = document.getElementById("risk-no-accounts");
-  var riskWarning = document.getElementById("risk-warning");
-  var riskWarningText = document.getElementById("risk-warning-text");
-  var riskError = document.getElementById("risk-error");
-
-  function getTopSuggestions(accountId, mode){
-    var hist = state.accountHistory[accountId];
-    if (!hist || !hist[mode] || !hist[mode].length) return [];
-    var arr = hist[mode].slice();
-    arr.sort(function(a,b){
-      if (b.count !== a.count) return b.count - a.count;
-      return b.last - a.last;
-    });
-    return arr.slice(0, SUGGESTIONS_MAX).map(function(x){ return x.value; });
-  }
-
-  function renderRiskAccounts(){
-    riskAccountsContainer.innerHTML = "";
-
-    if (!state.accounts || state.accounts.length === 0) {
-      riskNoAccounts.style.display = "block";
-      return;
-    }
-    riskNoAccounts.style.display = "none";
-
+  function renderRisk(){
     var mode = state.riskMode;
-    var valuesMap = mode === "percent" ? state.riskValuesPercent : state.riskValuesDollar;
+    var map = state.risk[mode];
+
+    document.querySelectorAll("#risk-switch div").forEach(function(d){
+      d.classList.toggle("on", d.getAttribute("data-mode") === mode);
+    });
+
+    var list = el("risk-list");
+    list.innerHTML = "";
 
     state.accounts.forEach(function(acc){
       var block = document.createElement("div");
-      block.className = "risk-account-block";
+      block.className = "rblock";
 
-      var header = document.createElement("div");
-      header.className = "risk-account-header";
-      var nameEl = document.createElement("span");
-      nameEl.className = "risk-account-name";
-      nameEl.textContent = acc.name || "Compte";
-      header.appendChild(nameEl);
-      if (mode === "percent") {
-        var capEl = document.createElement("span");
-        capEl.className = "risk-account-capital";
-        capEl.textContent = (typeof acc.capital === "number" && acc.capital > 0) ? ("Capital : $" + acc.capital) : "Capital non défini";
-        header.appendChild(capEl);
-      }
-      block.appendChild(header);
+      var name = document.createElement("span");
+      name.className = "name";
+      name.textContent = acc.name || "Compte";
+      block.appendChild(name);
 
       var wrap = document.createElement("div");
-      wrap.className = "input-wrap";
+      wrap.className = "wrap";
 
-      if (mode === "dollar") {
-        var prefix = document.createElement("span");
-        prefix.className = "prefix";
-        prefix.textContent = "$";
-        wrap.appendChild(prefix);
-      }
+      var fix = document.createElement("span");
+      fix.className = "fix" + (mode === "percent" ? " right" : "");
+      fix.textContent = mode === "percent" ? "%" : "$";
 
-      var input = document.createElement("input");
-      input.type = "text";
-      input.setAttribute("inputmode", "decimal");
-      input.className = "tabular" + (mode === "dollar" ? " has-prefix" : "");
-      input.placeholder = mode === "percent" ? "Ex: 1" : "Ex: 100";
-      var currentVal = valuesMap[acc._id];
-      input.value = (currentVal !== null && currentVal !== undefined) ? String(currentVal) : "";
-      input.addEventListener("input", function(){
-        var v = parseFloat(input.value.replace(",", "."));
-        valuesMap[acc._id] = isNaN(v) ? null : v;
-        saveState();
-        updateRiskWarning();
+      var inp = document.createElement("input");
+      inp.type = "text";
+      inp.setAttribute("inputmode", "decimal");
+      inp.className = "tabular" + (mode === "dollar" ? " pad-l" : "");
+      var cur = map[acc.id];
+      inp.value = (cur === null || cur === undefined) ? "" : String(cur);
+      inp.addEventListener("input", function(){
+        map[acc.id] = num(inp.value);
+        save();
       });
-      wrap.appendChild(input);
 
-      if (mode === "percent") {
-        var suffix = document.createElement("span");
-        suffix.className = "prefix";
-        suffix.style.left = "auto";
-        suffix.style.right = "16px";
-        suffix.textContent = "%";
-        wrap.appendChild(suffix);
-      }
-
+      wrap.appendChild(fix);
+      wrap.appendChild(inp);
       block.appendChild(wrap);
 
-      var suggestions = getTopSuggestions(acc._id, mode);
-      if (suggestions.length > 0) {
-        var chipsWrap = document.createElement("div");
-        chipsWrap.className = "suggestion-chips";
-        suggestions.forEach(function(sVal){
-          var chip = document.createElement("button");
-          chip.type = "button";
-          chip.className = "suggestion-chip tabular";
-          chip.textContent = mode === "percent" ? (sVal + "%") : ("$" + sVal);
-          chip.addEventListener("click", function(){
-            input.value = String(sVal);
-            valuesMap[acc._id] = sVal;
-            saveState();
-            updateRiskWarning();
+      var mem = memoryFor(acc.id, mode);
+      if (mem.length){
+        var chips = document.createElement("div");
+        chips.className = "chips";
+        mem.forEach(function(v){
+          var c = document.createElement("button");
+          c.type = "button";
+          c.className = "chip tabular";
+          c.textContent = mode === "percent" ? (v + " %") : ("$" + v);
+          c.addEventListener("click", function(){
+            inp.value = String(v);
+            map[acc.id] = v;
+            save();
           });
-          chipsWrap.appendChild(chip);
+          chips.appendChild(c);
         });
-        block.appendChild(chipsWrap);
+        block.appendChild(chips);
       }
 
-      riskAccountsContainer.appendChild(block);
+      list.appendChild(block);
     });
+
+    el("risk-err").style.display = "none";
   }
 
-  function setRiskMode(mode){
-    state.riskMode = mode;
-    riskModeSwitch.querySelectorAll(".switch-option").forEach(function(opt){
-      opt.classList.toggle("active", opt.getAttribute("data-mode") === mode);
-    });
-    saveState();
-    renderRiskAccounts();
-    updateRiskWarning();
-  }
-
-  riskModeSwitch.querySelectorAll(".switch-option").forEach(function(opt){
-    opt.addEventListener("click", function(){
-      setRiskMode(opt.getAttribute("data-mode"));
+  document.querySelectorAll("#risk-switch div").forEach(function(d){
+    d.addEventListener("click", function(){
+      state.riskMode = d.getAttribute("data-mode");
+      save();
+      renderRisk();
     });
   });
 
-  document.getElementById("btn-goto-settings-from-risk").addEventListener("click", openSettings);
-
-  function updateRiskWarning(){
-    riskWarning.style.display = "none";
-    if (state.riskMode !== "percent") return;
-    var high = [];
-    state.accounts.forEach(function(acc){
-      var v = state.riskValuesPercent[acc._id];
-      if (typeof v === "number" && !isNaN(v) && v > 2) high.push(acc.name || "Compte");
-    });
-    if (high.length > 0) {
-      riskWarningText.textContent = "Risque élevé (> 2% du capital) sur : " + high.join(", ") + ".";
-      riskWarning.style.display = "flex";
-    }
-  }
-
-  function populateRiskScreen(){
-    setRiskMode(state.riskMode || "dollar");
-    riskError.style.display = "none";
-  }
-
-  document.getElementById("btn-risk-next").addEventListener("click", function(){
-    if (!state.accounts || state.accounts.length === 0) {
-      riskError.textContent = "Ajoute au moins un compte dans les Paramètres.";
-      riskError.style.display = "block";
-      return;
-    }
-    var mode = state.riskMode;
-    var valuesMap = mode === "percent" ? state.riskValuesPercent : state.riskValuesDollar;
-    var hasValid = false;
+  el("risk-next").addEventListener("click", function(){
+    var map = state.risk[state.riskMode];
+    var ok = false;
     for (var i=0;i<state.accounts.length;i++){
-      var v = valuesMap[state.accounts[i]._id];
-      if (typeof v === "number" && !isNaN(v) && v > 0) { hasValid = true; break; }
+      var v = map[state.accounts[i].id];
+      if (typeof v === "number" && v > 0){ ok = true; break; }
     }
-    if (!hasValid) {
-      riskError.textContent = mode === "percent"
-        ? "Saisis au moins un pourcentage valide, supérieur à 0, pour un compte."
-        : "Saisis au moins un montant en $ valide, supérieur à 0, pour un compte.";
-      riskError.style.display = "block";
+    if (!ok){
+      var e = el("risk-err");
+      e.textContent = "Saisis un risque pour au moins un compte.";
+      e.style.display = "block";
       return;
     }
-    riskError.style.display = "none";
-    saveState();
-    populateSlScreen();
-    showScreen("screen-sl");
+    el("risk-err").style.display = "none";
+    el("stop-input").value = (state.stop === null || state.stop === undefined) ? "" : String(state.stop);
+    el("stop-err").style.display = "none";
+    show("s-stop");
   });
 
-  // ---------- Ecran 3 : Stop Loss ----------
-  var slModeSwitch = document.getElementById("sl-mode-switch");
-  var slRawBlock = document.getElementById("sl-raw-block");
-  var slEntryExitBlock = document.getElementById("sl-entryexit-block");
-  var inputSlRaw = document.getElementById("input-sl-raw");
-  var inputEntry = document.getElementById("input-entry");
-  var inputExit = document.getElementById("input-exit");
-  var slComputedDistance = document.getElementById("sl-computed-distance");
-  var slError = document.getElementById("sl-error");
+  /* ---------- Écran 3 : stop ---------- */
 
-  function setSlMode(mode){
-    state.slMode = mode;
-    slModeSwitch.querySelectorAll(".switch-option").forEach(function(opt){
-      opt.classList.toggle("active", opt.getAttribute("data-mode") === mode);
-    });
-    slRawBlock.style.display = mode === "raw" ? "block" : "none";
-    slEntryExitBlock.style.display = mode === "entryExit" ? "block" : "none";
-    saveState();
-  }
-
-  slModeSwitch.querySelectorAll(".switch-option").forEach(function(opt){
-    opt.addEventListener("click", function(){
-      setSlMode(opt.getAttribute("data-mode"));
-    });
+  el("stop-input").addEventListener("input", function(){
+    state.stop = num(this.value);
+    save();
   });
 
-  inputSlRaw.addEventListener("input", function(){
-    var v = parseFloat(inputSlRaw.value.replace(",", "."));
-    state.slValue = isNaN(v) ? null : v;
-    saveState();
-  });
-
-  function updateComputedDistance(){
-    var entry = parseFloat((inputEntry.value || "").replace(",", "."));
-    var exit = parseFloat((inputExit.value || "").replace(",", "."));
-    if (!isNaN(entry) && !isNaN(exit)) {
-      slComputedDistance.textContent = Math.abs(entry - exit).toString();
-    } else {
-      slComputedDistance.textContent = "—";
-    }
-  }
-
-  inputEntry.addEventListener("input", function(){
-    var v = parseFloat(inputEntry.value.replace(",", "."));
-    state.entryPrice = isNaN(v) ? null : v;
-    saveState();
-    updateComputedDistance();
-  });
-
-  inputExit.addEventListener("input", function(){
-    var v = parseFloat(inputExit.value.replace(",", "."));
-    state.exitPrice = isNaN(v) ? null : v;
-    saveState();
-    updateComputedDistance();
-  });
-
-  function populateSlScreen(){
-    setSlMode(state.slMode || "raw");
-    inputSlRaw.value = (state.slValue !== null && state.slValue !== undefined) ? String(state.slValue) : "";
-    inputEntry.value = (state.entryPrice !== null && state.entryPrice !== undefined) ? String(state.entryPrice) : "";
-    inputExit.value = (state.exitPrice !== null && state.exitPrice !== undefined) ? String(state.exitPrice) : "";
-    updateComputedDistance();
-    slError.style.display = "none";
-  }
-
-  document.getElementById("btn-sl-next").addEventListener("click", function(){
-    var distance;
-    if (state.slMode === "raw") {
-      distance = parseFloat((inputSlRaw.value || "").replace(",", "."));
-      if (isNaN(distance) || distance <= 0) {
-        slError.textContent = "Saisis une distance de stop loss valide, supérieure à 0.";
-        slError.style.display = "block";
-        return;
-      }
-    } else {
-      var entry = parseFloat((inputEntry.value || "").replace(",", "."));
-      var exit = parseFloat((inputExit.value || "").replace(",", "."));
-      if (isNaN(entry) || isNaN(exit)) {
-        slError.textContent = "Saisis un prix d'entrée et un prix de sortie valides.";
-        slError.style.display = "block";
-        return;
-      }
-      distance = Math.abs(entry - exit);
-      if (distance <= 0) {
-        slError.textContent = "Le prix d'entrée et le prix de sortie doivent être différents.";
-        slError.style.display = "block";
-        return;
-      }
-    }
-    slError.style.display = "none";
-    saveState();
-    computeAndShowResult();
-  });
-
-  // ---------- Ecran 4 : Résultat ----------
-  var resultErrorBanner = document.getElementById("result-error-banner");
-  var resultSkipBanner = document.getElementById("result-skip-banner");
-  var resultBody = document.getElementById("result-body");
-  var resultAssetTitle = document.getElementById("result-asset-title");
-  var resultAssetName = document.getElementById("result-asset-name");
-  var resultSlValue = document.getElementById("result-sl-value");
-  var resultEntryRow = document.getElementById("result-entry-row");
-  var resultEntryValue = document.getElementById("result-entry-value");
-  var resultExitRow = document.getElementById("result-exit-row");
-  var resultExitValue = document.getElementById("result-exit-value");
-  var resultFormulaHint = document.getElementById("result-formula-hint");
-  var resultAccountsList = document.getElementById("result-accounts-list");
-  var historyToggleBtn = document.getElementById("history-toggle");
-  var historyListEl = document.getElementById("history-list");
-
-  function recordAccountHistory(accountId, mode, value){
-    state.accountHistory[accountId] = state.accountHistory[accountId] || { percent: [], dollar: [] };
-    var arr = state.accountHistory[accountId][mode];
-    var existing = null;
-    for (var i=0;i<arr.length;i++){
-      if (arr[i].value === value) { existing = arr[i]; break; }
-    }
-    if (existing) {
-      existing.count += 1;
-      existing.last = Date.now();
-    } else {
-      arr.push({ value: value, count: 1, last: Date.now() });
-    }
-    arr.sort(function(a,b){ return (b.count - a.count) || (b.last - a.last); });
-    if (arr.length > ACCOUNT_HISTORY_CAP) arr.length = ACCOUNT_HISTORY_CAP;
-  }
-
-  function pushHistory(asset, accountName, lot, riskDollars){
-    state.history = state.history || [];
-    state.history.unshift({ asset: asset, account: accountName, lot: lot, riskDollars: riskDollars, ts: Date.now() });
-    state.history = state.history.slice(0, HISTORY_MAX);
-    saveState();
-  }
-
-  function renderHistory(){
-    historyListEl.innerHTML = "";
-    historyListEl.classList.remove("open");
-    var hist = state.history || [];
-    historyToggleBtn.textContent = "Voir l'historique (" + hist.length + ")";
-    historyToggleBtn.style.display = hist.length > 0 ? "block" : "none";
-    hist.forEach(function(h){
-      var row = document.createElement("div");
-      row.className = "history-row";
-      row.innerHTML = '<span class="h-asset">' + escapeHtml(h.asset) + ' · ' + escapeHtml(h.account || "") + '</span><span>' + h.lot.toFixed(2) + ' lots · $' + h.riskDollars.toFixed(2) + '</span>';
-      historyListEl.appendChild(row);
-    });
-  }
-
-  historyToggleBtn.addEventListener("click", function(){
-    var isOpen = historyListEl.classList.toggle("open");
-    var hist = state.history || [];
-    historyToggleBtn.textContent = (isOpen ? "Masquer l'historique (" : "Voir l'historique (") + hist.length + ")";
-  });
-
-  function bannerHtml(message, type){
-    return '<div class="banner ' + type + '">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>' +
-      '<span>' + escapeHtml(message) + '</span></div>';
-  }
-
-  function renderResultAccounts(results){
-    resultAccountsList.innerHTML = "";
-    var divisor = (typeof state.lotDivisor === "number" && state.lotDivisor > 0) ? state.lotDivisor : 4;
-    results.forEach(function(r){
-      var card = document.createElement("div");
-      card.className = "result-account-card";
-
-      var left = document.createElement("div");
-      left.innerHTML = '<div class="result-account-name">' + escapeHtml(r.accountName) + '</div><div class="result-account-sub">Risque : $' + r.riskDollars.toFixed(2) + '</div>';
-
-      var right = document.createElement("div");
-      right.className = "result-account-lots";
-      right.innerHTML = '<div class="lots-value tabular">' + r.lot.toFixed(2) + '</div><div class="lots-quarter tabular">÷' + divisor + ' → ' + r.lotDivided.toFixed(2) + '</div>';
-
-      card.appendChild(left);
-      card.appendChild(right);
-      resultAccountsList.appendChild(card);
-    });
-  }
-
-  function computeAndShowResult(){
-    resultAssetTitle.textContent = state.asset || "—";
-
-    var specs = findAsset(state.asset);
-
-    if (!state.asset || !specs) {
-      showResultError("Sélectionne un actif valide avant de calculer.");
+  el("stop-next").addEventListener("click", function(){
+    if (!(state.stop > 0)){
+      var e = el("stop-err");
+      e.textContent = "Saisis une distance de stop supérieure à 0.";
+      e.style.display = "block";
       return;
     }
+    el("stop-err").style.display = "none";
+    save();
+    compute();
+  });
 
-    if (!specs.value || specs.value <= 0) {
-      showResultError("Valeur du pip invalide pour cet actif (à régler dans Paramètres).");
-      return;
-    }
+  /* ---------- Écran 4 : résultat ---------- */
 
-    var distanceSL;
-    if (state.slMode === "raw") {
-      if (typeof state.slValue !== "number" || state.slValue <= 0) {
-        showResultError("Distance de stop loss invalide.");
-        return;
-      }
-      distanceSL = state.slValue;
-    } else {
-      if (typeof state.entryPrice !== "number" || typeof state.exitPrice !== "number") {
-        showResultError("Prix d'entrée ou de sortie invalide.");
-        return;
-      }
-      distanceSL = Math.abs(state.entryPrice - state.exitPrice);
-      if (distanceSL <= 0) {
-        showResultError("Le prix d'entrée et le prix de sortie doivent être différents.");
-        return;
-      }
-    }
+  function compute(){
+    var asset = getAsset(state.assetId);
+    if (!asset){ fail("Sélectionne un actif."); return; }
+    if (!(state.stop > 0)){ fail("Distance de stop invalide."); return; }
 
-    var denomBase = distanceSL * specs.value;
-    if (!isFinite(denomBase) || denomBase <= 0) {
-      showResultError("Erreur de calcul : dénominateur invalide.");
-      return;
-    }
-
-    var divisor = (typeof state.lotDivisor === "number" && state.lotDivisor > 0) ? state.lotDivisor : 4;
     var mode = state.riskMode;
-    var valuesMap = mode === "percent" ? state.riskValuesPercent : state.riskValuesDollar;
+    var map = state.risk[mode];
+    var divisor = state.divisorOn && state.divisor > 0 ? state.divisor : null;
 
     var results = [];
     var skipped = [];
 
     state.accounts.forEach(function(acc){
-      var v = valuesMap[acc._id];
-      if (typeof v !== "number" || isNaN(v) || v <= 0) return;
+      var r = map[acc.id];
+      if (!(r > 0)) return;
 
-      var riskDollars;
-      if (mode === "percent") {
-        if (typeof acc.capital !== "number" || acc.capital <= 0) {
-          skipped.push((acc.name || "Compte") + " (capital non défini)");
-          return;
-        }
-        riskDollars = acc.capital * (v / 100);
+      var name = acc.name || "Compte";
+      var target;
+      if (mode === "percent"){
+        if (!(acc.capital > 0)){ skipped.push(name + " (capital non renseigné)"); return; }
+        target = acc.capital * (r / 100);
       } else {
-        riskDollars = v;
+        target = r;
       }
 
-      var lot = riskDollars / denomBase;
-      if (!isFinite(lot) || lot <= 0) {
-        skipped.push((acc.name || "Compte") + " (calcul invalide)");
-        return;
-      }
-      lot = Math.round(lot * 100) / 100;
-      if (lot < 0.01) lot = 0.01;
+      var k = cell(asset.id, acc.id);
+      var value = state.values[k];
+      if (!(value > 0)){ skipped.push(name + " (valeur non renseignée)"); return; }
+
+      var comm = state.commissionsOn ? (state.commissions[k] || 0) : 0;
+      var perLot = state.stop * value + comm;
+      if (!(perLot > 0)){ skipped.push(name); return; }
+
+      var raw = target / perLot;
+      var lot = Math.round(raw * 100) / 100;
+      var atMin = false;
+      if (lot < 0.01){ lot = 0.01; atMin = true; }
+
+      var real = lot * perLot;
+      var off = Math.abs(real - target) / target;
 
       results.push({
-        accountName: acc.name || "Compte",
-        riskDollars: riskDollars,
+        name: name,
         lot: lot,
-        lotDivided: lot / divisor
+        divided: divisor ? Math.round(lot / divisor * 100) / 100 : null,
+        target: target,
+        real: real,
+        targetPct: mode === "percent" ? r : null,
+        realPct: (mode === "percent" && acc.capital > 0) ? (real / acc.capital * 100) : null,
+        rounded: off > 0.01,
+        atMin: atMin,
+        commission: comm * lot
       });
 
-      recordAccountHistory(acc._id, mode, v);
+      remember(acc.id, mode, r);
     });
 
-    if (results.length === 0) {
-      showResultError(skipped.length > 0 ? ("Aucun résultat calculable : " + skipped.join(", ") + ".") : "Saisis au moins une valeur de risque valide pour un compte.");
+    if (!results.length){
+      fail(skipped.length ? skipped.join(" · ") : "Aucun risque saisi.");
       return;
     }
 
-    resultErrorBanner.style.display = "none";
-    resultErrorBanner.innerHTML = "";
-    resultBody.style.display = "block";
+    el("result-err").style.display = "none";
+    el("result-title").textContent = asset.symbol + " · stop " + fmt(state.stop, 4);
 
-    if (skipped.length > 0) {
-      resultSkipBanner.innerHTML = bannerHtml("Compte(s) ignoré(s) : " + skipped.join(", ") + ".", "warning");
-      resultSkipBanner.style.display = "block";
-    } else {
-      resultSkipBanner.style.display = "none";
-      resultSkipBanner.innerHTML = "";
-    }
-
-    resultAssetName.textContent = state.asset;
-    resultSlValue.textContent = distanceSL.toString();
-
-    if (state.slMode === "entryExit") {
-      resultEntryRow.style.display = "flex";
-      resultExitRow.style.display = "flex";
-      resultEntryValue.textContent = state.entryPrice;
-      resultExitValue.textContent = state.exitPrice;
-    } else {
-      resultEntryRow.style.display = "none";
-      resultExitRow.style.display = "none";
-    }
-
-    resultFormulaHint.textContent = "Valeur : $" + specs.value + " par pip · Diviseur : ÷" + divisor;
-
-    renderResultAccounts(results);
+    var list = el("result-list");
+    list.innerHTML = "";
 
     results.forEach(function(r){
-      pushHistory(state.asset, r.accountName, r.lot, r.riskDollars);
+      var c = document.createElement("div");
+      c.className = "rcard";
+
+      var top = document.createElement("div");
+      top.className = "rcard-top";
+      var nm = document.createElement("span");
+      nm.className = "rcard-account";
+      nm.textContent = r.name;
+      top.appendChild(nm);
+      if (r.atMin){
+        top.appendChild(tag("lot minimum"));
+      } else if (r.rounded){
+        top.appendChild(tag("arrondi"));
+      }
+      c.appendChild(top);
+
+      var lot = document.createElement("div");
+      lot.className = "lot";
+      var b = document.createElement("b");
+      b.className = "tabular";
+      b.textContent = r.lot.toFixed(2);
+      var u = document.createElement("span");
+      u.textContent = "lots";
+      lot.appendChild(b);
+      lot.appendChild(u);
+      c.appendChild(lot);
+
+      var isPct = (r.realPct !== null);
+      c.appendChild(row("risque", isPct ? pct(r.realPct) : usd(r.real), false));
+      c.appendChild(row("visé", isPct ? pct(r.targetPct) : usd(r.target), true));
+      if (r.commission > 0){
+        c.appendChild(row("dont commission", usd(r.commission), true));
+      }
+
+      if (r.divided !== null){
+        var d = document.createElement("div");
+        d.className = "rdiv";
+        var dk = document.createElement("span");
+        dk.textContent = "÷ " + state.divisor;
+        var dv = document.createElement("b");
+        dv.className = "tabular";
+        dv.textContent = r.divided >= 0.01 ? r.divided.toFixed(2) : "—";
+        d.appendChild(dk);
+        d.appendChild(dv);
+        c.appendChild(d);
+      }
+
+      list.appendChild(c);
     });
+
+    var note = el("result-note");
+    if (skipped.length){
+      note.textContent = "Ignoré : " + skipped.join(" · ");
+      note.style.display = "block";
+    } else {
+      note.style.display = "none";
+    }
+
+    results.forEach(function(r){
+      state.history.unshift({
+        symbol: asset.symbol,
+        name: r.name,
+        lot: r.lot,
+        risk: (r.realPct !== null) ? pct(r.realPct) : usd(r.real),
+        ts: Date.now()
+      });
+    });
+    state.history = state.history.slice(0, HIST_MAX);
+
     renderHistory();
-
-    saveState();
-    showScreen("screen-result");
+    save();
+    show("s-result");
   }
 
-  function showResultError(message){
-    resultBody.style.display = "none";
-    resultSkipBanner.style.display = "none";
-    resultSkipBanner.innerHTML = "";
-    resultErrorBanner.innerHTML = bannerHtml(message, "error");
-    resultErrorBanner.style.display = "block";
-    showScreen("screen-result");
+  function tag(text){
+    var t = document.createElement("span");
+    t.className = "tag";
+    t.textContent = text;
+    return t;
   }
 
-  document.getElementById("btn-new-calc").addEventListener("click", function(){
-    // Les valeurs restent en mémoire (localStorage) pour pré-remplissage,
-    // on relance simplement le flux depuis l'écran 1.
-    renderAssetGrid();
-    showScreen("screen-asset");
+  function row(k, v, sub){
+    var r = document.createElement("div");
+    r.className = "rrow" + (sub ? " sub" : "");
+    var a = document.createElement("span");
+    a.className = "k";
+    a.textContent = k;
+    var b = document.createElement(sub ? "span" : "b");
+    b.className = "tabular";
+    b.textContent = v;
+    r.appendChild(a);
+    r.appendChild(b);
+    return r;
+  }
+
+  function fail(msg){
+    el("result-title").textContent = "—";
+    el("result-list").innerHTML = "";
+    el("result-note").style.display = "none";
+    var e = el("result-err");
+    e.textContent = msg;
+    e.style.display = "block";
+    renderHistory();
+    show("s-result");
+  }
+
+  function renderHistory(){
+    var btn = el("hist-btn");
+    var box = el("hist-list");
+    box.innerHTML = "";
+    box.classList.remove("open");
+    var h = state.history || [];
+    btn.style.display = h.length ? "block" : "none";
+    btn.textContent = "Historique (" + h.length + ")";
+    h.forEach(function(x){
+      var r = document.createElement("div");
+      r.className = "hist-row";
+      var a = document.createElement("span");
+      a.innerHTML = "";
+      a.textContent = x.symbol + " · " + x.name;
+      var b = document.createElement("b");
+      b.className = "tabular";
+      b.textContent = x.lot.toFixed(2) + " lots · " + x.risk;
+      r.appendChild(a);
+      r.appendChild(b);
+      box.appendChild(r);
+    });
+  }
+
+  el("hist-btn").addEventListener("click", function(){
+    var open = el("hist-list").classList.toggle("open");
+    this.textContent = (open ? "Masquer" : "Historique (" + state.history.length + ")");
   });
 
-  // ---------- Initialisation ----------
-  function init(){
-    renderAssetGrid();
-    populateRiskScreen();
-    populateSlScreen();
-    showScreen("screen-asset");
+  el("new-calc").addEventListener("click", function(){
+    renderAssets();
+    show("s-asset");
+  });
+
+  /* ---------- Paramètres ---------- */
+
+  el("go-settings").addEventListener("click", function(){
+    renderOptions();
+    renderAccounts();
+    renderAssetSettings();
+    show("s-settings");
+  });
+
+  function renderOptions(){
+    el("tgl-div").classList.toggle("on", !!state.divisorOn);
+    el("div-sub").classList.toggle("show", !!state.divisorOn);
+    el("div-input").value = String(state.divisor);
+    document.querySelectorAll("#div-sub .chip").forEach(function(c){
+      c.classList.toggle("on", num(c.getAttribute("data-div")) === state.divisor);
+    });
+    el("tgl-comm").classList.toggle("on", !!state.commissionsOn);
   }
 
-  init();
+  el("tgl-div").addEventListener("click", function(){
+    state.divisorOn = !state.divisorOn;
+    save();
+    renderOptions();
+  });
+
+  el("tgl-comm").addEventListener("click", function(){
+    state.commissionsOn = !state.commissionsOn;
+    save();
+    renderOptions();
+    renderAssetSettings();
+  });
+
+  el("div-input").addEventListener("input", function(){
+    var v = num(this.value);
+    if (v > 0){ state.divisor = v; save(); }
+    document.querySelectorAll("#div-sub .chip").forEach(function(c){
+      c.classList.toggle("on", num(c.getAttribute("data-div")) === state.divisor);
+    });
+  });
+
+  document.querySelectorAll("#div-sub .chip").forEach(function(c){
+    c.addEventListener("click", function(){
+      state.divisor = num(c.getAttribute("data-div"));
+      save();
+      renderOptions();
+    });
+  });
+
+  function renderAccounts(){
+    var box = el("acc-list");
+    box.innerHTML = "";
+    state.accounts.forEach(function(acc){
+      var card = document.createElement("div");
+      card.className = "card";
+
+      var row = document.createElement("div");
+      row.className = "row";
+
+      var name = document.createElement("input");
+      name.type = "text";
+      name.className = "grow";
+      name.value = acc.name || "";
+      name.placeholder = "Nom";
+      name.addEventListener("input", function(){ acc.name = name.value; save(); });
+
+      var cap = document.createElement("div");
+      cap.className = "cap";
+      var fix = document.createElement("span");
+      fix.className = "fix";
+      fix.textContent = "$";
+      var capIn = document.createElement("input");
+      capIn.type = "text";
+      capIn.setAttribute("inputmode", "decimal");
+      capIn.className = "tabular";
+      capIn.placeholder = "Capital";
+      capIn.value = (acc.capital === null || acc.capital === undefined) ? "" : String(acc.capital);
+      capIn.addEventListener("input", function(){ acc.capital = num(capIn.value); save(); });
+      cap.appendChild(fix);
+      cap.appendChild(capIn);
+
+      var del = mini("del", "✕");
+      del.addEventListener("click", function(){
+        state.accounts = state.accounts.filter(function(x){ return x.id !== acc.id; });
+        delete state.risk.dollar[acc.id];
+        delete state.risk.percent[acc.id];
+        delete state.memory[acc.id];
+        state.assets.forEach(function(a){
+          delete state.values[cell(a.id, acc.id)];
+          delete state.commissions[cell(a.id, acc.id)];
+        });
+        save();
+        renderAccounts();
+        renderAssetSettings();
+      });
+
+      row.appendChild(name);
+      row.appendChild(cap);
+      row.appendChild(del);
+      card.appendChild(row);
+      box.appendChild(card);
+    });
+  }
+
+  el("add-acc").addEventListener("click", function(){
+    state.accounts.push({ id: uid("ac"), name: "Nouveau compte", capital: null });
+    save();
+    renderAccounts();
+    renderAssetSettings();
+  });
+
+  function mini(cls, text){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "mini " + cls;
+    b.textContent = text;
+    return b;
+  }
+
+  function moveAsset(id, delta){
+    var i = -1;
+    for (var n=0;n<state.assets.length;n++) if (state.assets[n].id === id) i = n;
+    var j = i + delta;
+    if (i < 0 || j < 0 || j >= state.assets.length) return;
+    var tmp = state.assets[i];
+    state.assets[i] = state.assets[j];
+    state.assets[j] = tmp;
+    save();
+    renderAssetSettings();
+  }
+
+  function renderAssetSettings(){
+    var box = el("ast-list");
+    box.innerHTML = "";
+
+    state.assets.forEach(function(a, index){
+      var card = document.createElement("div");
+      card.className = "card";
+
+      var head = document.createElement("div");
+      head.className = "row";
+
+      var sym = document.createElement("input");
+      sym.type = "text";
+      sym.className = "sym";
+      sym.maxLength = 14;
+      sym.value = a.symbol || "";
+      sym.addEventListener("input", function(){
+        a.symbol = sym.value.toUpperCase();
+        save();
+      });
+
+      var up = mini("", "▲");
+      up.disabled = index === 0;
+      up.style.opacity = index === 0 ? ".3" : "1";
+      up.addEventListener("click", function(){ moveAsset(a.id, -1); });
+
+      var down = mini("", "▼");
+      down.disabled = index === state.assets.length - 1;
+      down.style.opacity = index === state.assets.length - 1 ? ".3" : "1";
+      down.addEventListener("click", function(){ moveAsset(a.id, 1); });
+
+      var del = mini("del", "✕");
+      del.addEventListener("click", function(){
+        state.assets = state.assets.filter(function(x){ return x.id !== a.id; });
+        state.accounts.forEach(function(acc){
+          delete state.values[cell(a.id, acc.id)];
+          delete state.commissions[cell(a.id, acc.id)];
+        });
+        if (state.assetId === a.id) state.assetId = null;
+        save();
+        renderAssetSettings();
+      });
+
+      head.appendChild(sym);
+      head.appendChild(up);
+      head.appendChild(down);
+      head.appendChild(del);
+      card.appendChild(head);
+
+      state.accounts.forEach(function(acc){
+        var k = cell(a.id, acc.id);
+
+        var vrow = document.createElement("div");
+        vrow.className = "vrow";
+
+        var lab = document.createElement("div");
+        lab.className = "lab";
+        lab.textContent = acc.name || "Compte";
+
+        vrow.appendChild(lab);
+        vrow.appendChild(moneyField(state.values[k], "valeur", function(v){
+          if (v === null) delete state.values[k]; else state.values[k] = v;
+          save();
+        }, false));
+        vrow.appendChild(moneyField(state.commissions[k], "comm.", function(v){
+          if (v === null) delete state.commissions[k]; else state.commissions[k] = v;
+          save();
+        }, true));
+
+        card.appendChild(vrow);
+      });
+
+      box.appendChild(card);
+    });
+  }
+
+  function moneyField(value, placeholder, onChange, isComm){
+    var w = document.createElement("div");
+    w.className = "money" + (isComm ? " comm" + (state.commissionsOn ? " show" : "") : "");
+    var fix = document.createElement("span");
+    fix.className = "fix";
+    fix.textContent = "$";
+    var inp = document.createElement("input");
+    inp.type = "text";
+    inp.setAttribute("inputmode", "decimal");
+    inp.className = "tabular";
+    inp.placeholder = placeholder;
+    inp.value = (value === null || value === undefined) ? "" : String(value);
+    inp.addEventListener("input", function(){
+      var v = num(inp.value);
+      onChange(v !== null && v > 0 ? v : null);
+    });
+    w.appendChild(fix);
+    w.appendChild(inp);
+    return w;
+  }
+
+  el("add-ast").addEventListener("click", function(){
+    state.assets.push({ id: uid("as"), symbol: "NOUVEAU" });
+    save();
+    renderAssetSettings();
+  });
+
+  renderAssets();
+  renderHistory();
+  show("s-asset");
 })();
 </script>
 </body>
