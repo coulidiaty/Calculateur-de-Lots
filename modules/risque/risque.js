@@ -1,5 +1,7 @@
 /* Écran 2 : risque, en dollars ou en pourcentage du capital.
-   Les montants les plus utilisés sont proposés en un clic. */
+   Les montants les plus utilisés sont proposés en un clic.
+   Avec l'option « risque fixe », cet écran est sauté : le calcul passe
+   directement de l'actif au stop. */
 (function(App){
   "use strict";
 
@@ -37,10 +39,36 @@
         '</div>' +
         '<div class="note" id="risk-equiv"></div>' +
         '<div class="err" id="risk-err"></div>' +
+        '<div class="opt">' +
+          '<span>Garder ce risque<span class="opt-sub">Passer directement au stop</span></span>' +
+          '<button class="tgl" id="risk-fixed" role="switch" aria-label="Garder ce risque"></button>' +
+        '</div>' +
         '<div class="spacer"></div>' +
         '<div class="actions"><button class="btn" id="risk-next">Suivant</button></div>' +
       '</div>' +
     '</section>';
+
+  /* ---------- Règles partagées avec les autres écrans ---------- */
+
+  // Risque visé en dollars, ou null tant qu'il manque une saisie.
+  function target(){
+    var s = store.state;
+    return App.calcul.target(s.riskMode, s.risk[s.riskMode], s.capital);
+  }
+
+  // Vrai quand l'écran Risque peut être sauté.
+  function skipped(){ return store.state.riskFixed && target() !== null; }
+
+  // Nombre d'étapes du parcours : 2 avec le risque fixe, 3 sinon.
+  function steps(){ return skipped() ? 2 : 3; }
+
+  // Ex. « $50 » ou « 1 % · $200.00 ».
+  function summary(){
+    var s = store.state;
+    var r = s.risk[s.riskMode];
+    if (s.riskMode === "percent") return r + " % · " + u.usd(target());
+    return "$" + r;
+  }
 
   /* ---------- Mémoire des montants ---------- */
 
@@ -69,9 +97,15 @@
   function renderEquiv(){
     var s = store.state;
     var note = u.el("risk-equiv");
-    var t = (s.riskMode === "percent") ? App.calcul.target("percent", s.risk.percent, s.capital) : null;
+    var t = (s.riskMode === "percent") ? target() : null;
     note.textContent = t !== null ? "Soit " + u.usd(t) : "";
     note.style.display = t !== null ? "block" : "none";
+  }
+
+  function renderFixed(){
+    var on = store.state.riskFixed;
+    u.el("risk-fixed").classList.toggle("on", on);
+    u.el("risk-fixed").setAttribute("aria-checked", String(on));
   }
 
   function render(){
@@ -111,6 +145,7 @@
     u.el("capital-input").value = u.str(s.capital);
 
     renderEquiv();
+    renderFixed();
     clearError();
   }
 
@@ -147,6 +182,12 @@
       clearError();
     });
 
+    u.el("risk-fixed").addEventListener("click", function(){
+      s.riskFixed = !s.riskFixed;
+      store.save();
+      renderFixed();
+    });
+
     u.el("risk-next").addEventListener("click", function(){
       if (!(s.risk[s.riskMode] > 0)) return error("Saisis le risque que tu veux prendre.");
       if (s.riskMode === "percent" && !(s.capital > 0)) return error("Saisis le capital du compte pour calculer un risque en %.");
@@ -154,6 +195,6 @@
     });
   }
 
-  App.risque = { remember: remember };
+  App.risque = { remember: remember, target: target, skipped: skipped, steps: steps, summary: summary };
   App.nav.register({ id:"s-risk", html:html, init:init, enter:render });
 })(window.LotCalc = window.LotCalc || {});

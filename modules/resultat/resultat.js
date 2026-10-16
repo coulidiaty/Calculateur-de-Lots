@@ -35,7 +35,7 @@
       return fail(mode === "percent" && risk > 0 ? "Capital non renseigné." : "Aucun risque saisi.");
     }
     if (!(asset.value > 0)){
-      return fail("Valeur d'1 unité non renseignée pour " + asset.symbol + ". Règle-la dans les Paramètres.");
+      return fail("Valeur $ non renseignée pour " + asset.symbol + ". Règle-la dans les Paramètres.");
     }
 
     var r = App.calcul.positionSize({
@@ -47,11 +47,12 @@
     });
     if (!r) return fail("Calcul impossible avec ces valeurs.");
 
-    var isPct = mode === "percent";
-    var realLabel = isPct ? u.pct(r.real / s.capital * 100) : u.usd(r.real);
+    var riskLabel = mode === "percent"
+      ? u.pct(r.real / s.capital * 100) + " · " + u.usd(r.real)
+      : u.usd(r.real);
 
-    remember(asset, r, realLabel);
-    render(asset, r, isPct ? { real: realLabel, target: u.pct(risk) } : null);
+    remember(asset, r, riskLabel);
+    render(asset, r, riskLabel);
   }
 
   function remember(asset, r, riskLabel){
@@ -62,17 +63,16 @@
     store.save();
   }
 
-  // pct : libellés en pourcentage, ou null en mode dollars.
-  function render(asset, r, pct){
+  function render(asset, r, riskLabel){
     var s = store.state;
     u.el("result-err").style.display = "none";
     u.el("result-title").textContent = asset.symbol + " · stop " + u.fmt(s.stop, 4);
 
     var card = ui.create("div", "rcard");
 
-    if (r.atMin || r.rounded){
+    if (r.atMin){
       var top = ui.create("div", "rcard-top");
-      top.appendChild(ui.create("span", "tag", r.atMin ? "lot minimum" : "arrondi"));
+      top.appendChild(ui.create("span", "tag", "lot minimum"));
       card.appendChild(top);
     }
 
@@ -81,10 +81,10 @@
     lot.appendChild(ui.create("span", null, "lots"));
     card.appendChild(lot);
 
-    card.appendChild(row("risque", pct ? pct.real : u.usd(r.real), false));
-    card.appendChild(row("visé", pct ? pct.target : u.usd(r.target), true));
-    if (pct) card.appendChild(row("en dollars", u.usd(r.real), true));
-    if (r.commission > 0) card.appendChild(row("dont commission", u.usd(r.commission), true));
+    var row = ui.create("div", "rrow");
+    row.appendChild(ui.create("span", "k", "risque"));
+    row.appendChild(ui.create("b", "tabular", riskLabel));
+    card.appendChild(row);
 
     if (r.divided !== null){
       var d = ui.create("div", "rdiv");
@@ -97,13 +97,6 @@
     box.innerHTML = "";
     box.appendChild(card);
     renderHistory();
-  }
-
-  function row(k, v, sub){
-    var r = ui.create("div", "rrow" + (sub ? " sub" : ""));
-    r.appendChild(ui.create("span", "k", k));
-    r.appendChild(ui.create(sub ? "span" : "b", "tabular", v));
-    return r;
   }
 
   function fail(msg){

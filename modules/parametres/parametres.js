@@ -1,4 +1,4 @@
-/* Écran Paramètres : options, capital du compte, liste des actifs. */
+/* Écran Paramètres : options, risque fixe, capital du compte, liste des actifs. */
 (function(App){
   "use strict";
 
@@ -11,6 +11,36 @@
       '<div class="topbar">' + ui.backButton("s-asset") + '</div>' +
       '<div class="head"><h1>Paramètres</h1></div>' +
       '<div class="content">' +
+
+        '<div class="sect">' +
+          '<div class="sect-title">Risque</div>' +
+          '<div class="opt">' +
+            '<span>Risque fixe<span class="opt-sub">Passer directement au stop</span></span>' +
+            '<button class="tgl" id="tgl-risk" role="switch" aria-label="Risque fixe"></button>' +
+          '</div>' +
+          '<div class="risk-sub" id="risk-sub">' +
+            '<div class="switch" id="set-risk-switch">' +
+              '<div data-mode="dollar">$</div>' +
+              '<div data-mode="percent">%</div>' +
+            '</div>' +
+            '<div class="wrap">' +
+              '<span class="fix" id="set-risk-fix">$</span>' +
+              '<input class="tabular" type="text" inputmode="decimal" id="set-risk-input">' +
+            '</div>' +
+            '<div class="note" id="set-risk-note"></div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="sect">' +
+          '<div class="sect-title">Compte</div>' +
+          '<div class="field">' +
+            '<label for="set-capital">Capital — sert au risque en %</label>' +
+            '<div class="wrap">' +
+              '<span class="fix">$</span>' +
+              '<input class="tabular pad-l" type="text" inputmode="decimal" id="set-capital" placeholder="10000">' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
 
         '<div class="sect">' +
           '<div class="sect-title">Options</div>' +
@@ -33,18 +63,8 @@
         '</div>' +
 
         '<div class="sect">' +
-          '<div class="sect-title">Compte</div>' +
-          '<div class="field">' +
-            '<label for="set-capital">Capital — sert au risque en %</label>' +
-            '<div class="wrap">' +
-              '<span class="fix">$</span>' +
-              '<input class="tabular pad-l" type="text" inputmode="decimal" id="set-capital" placeholder="10000">' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="sect">' +
-          '<div class="sect-title">Actifs — valeur d\'1 unité TradingView, pour 1 lot</div>' +
+          '<div class="sect-title">Actifs</div>' +
+          '<div class="note sect-note">Valeur : ce que vaut en dollars 1 unité de stop pour 1 lot, d\'après MetaTrader.</div>' +
           '<div id="ast-list"></div>' +
           '<button class="add" id="add-ast">+ Ajouter un actif</button>' +
         '</div>' +
@@ -53,17 +73,54 @@
       '</div>' +
     '</section>';
 
+  function setToggle(id, on){
+    u.el(id).classList.toggle("on", on);
+    u.el(id).setAttribute("aria-checked", String(on));
+  }
+
+  /* ---------- Risque fixe ---------- */
+
+  function renderRisk(){
+    var s = store.state;
+    var isPct = s.riskMode === "percent";
+    setToggle("tgl-risk", s.riskFixed);
+    u.el("risk-sub").classList.toggle("show", s.riskFixed);
+
+    document.querySelectorAll("#set-risk-switch div").forEach(function(d){
+      d.classList.toggle("on", d.getAttribute("data-mode") === s.riskMode);
+    });
+    var fix = u.el("set-risk-fix");
+    fix.textContent = isPct ? "%" : "$";
+    fix.classList.toggle("right", isPct);
+    var inp = u.el("set-risk-input");
+    inp.classList.toggle("pad-l", !isPct);
+    inp.placeholder = isPct ? "1" : "50";
+    inp.value = u.str(s.risk[s.riskMode]);
+    renderRiskNote();
+  }
+
+  // Équivalent en dollars, ou ce qu'il manque pour l'obtenir.
+  function renderRiskNote(){
+    var s = store.state;
+    var note = u.el("set-risk-note");
+    var t = App.risque.target();
+    if (t === null){
+      note.textContent = s.risk[s.riskMode] > 0 ? "Renseigne le capital ci-dessous." : "Saisis un montant.";
+    } else {
+      note.textContent = s.riskMode === "percent" ? "Soit " + u.usd(t) : "";
+    }
+    note.style.display = note.textContent ? "block" : "none";
+  }
+
   /* ---------- Options ---------- */
 
   function renderOptions(){
     var s = store.state;
-    u.el("tgl-div").classList.toggle("on", s.divisorOn);
-    u.el("tgl-div").setAttribute("aria-checked", String(s.divisorOn));
+    setToggle("tgl-div", s.divisorOn);
     u.el("div-sub").classList.toggle("show", s.divisorOn);
     u.el("div-input").value = String(s.divisor);
     markDivisor();
-    u.el("tgl-comm").classList.toggle("on", s.commissionsOn);
-    u.el("tgl-comm").setAttribute("aria-checked", String(s.commissionsOn));
+    setToggle("tgl-comm", s.commissionsOn);
   }
 
   function markDivisor(){
@@ -101,12 +158,14 @@
     return b;
   }
 
-  function moneyField(value, placeholder, onChange, isComm){
-    var w = ui.create("div", "wrap money" +(isComm ? " comm" + (store.state.commissionsOn ? " show" : "") : ""));
+  // Champ en dollars avec son libellé au-dessus.
+  function moneyField(label, value, onChange){
+    var f = ui.create("label", "money");
+    f.appendChild(ui.create("span", "money-lab", label));
+    var w = ui.create("div", "wrap");
     var inp = ui.create("input", "tabular");
     inp.type = "text";
     inp.setAttribute("inputmode", "decimal");
-    inp.placeholder = placeholder;
     inp.value = u.str(value);
     inp.addEventListener("input", function(){
       var v = u.num(inp.value);
@@ -115,7 +174,8 @@
     });
     w.appendChild(ui.create("span", "fix", "$"));
     w.appendChild(inp);
-    return w;
+    f.appendChild(w);
+    return f;
   }
 
   function renderAssets(){
@@ -160,9 +220,10 @@
       card.appendChild(head);
 
       var vrow = ui.create("div", "vrow");
-      vrow.appendChild(ui.create("div", "lab", "Valeur"));
-      vrow.appendChild(moneyField(a.value, "valeur", function(v){ a.value = v; }, false));
-      vrow.appendChild(moneyField(a.commission, "comm.", function(v){ a.commission = v; }, true));
+      vrow.appendChild(moneyField("Valeur $ (MetaTrader)", a.value, function(v){ a.value = v; }));
+      if (store.state.commissionsOn){
+        vrow.appendChild(moneyField("Commission $ / lot", a.commission, function(v){ a.commission = v; }));
+      }
       card.appendChild(vrow);
 
       box.appendChild(card);
@@ -170,6 +231,7 @@
   }
 
   function render(){
+    renderRisk();
     renderOptions();
     u.el("set-capital").value = u.str(store.state.capital);
     renderAssets();
@@ -177,6 +239,32 @@
 
   function init(){
     var s = store.state;
+
+    u.el("tgl-risk").addEventListener("click", function(){
+      s.riskFixed = !s.riskFixed;
+      store.save();
+      renderRisk();
+    });
+
+    document.querySelectorAll("#set-risk-switch div").forEach(function(d){
+      d.addEventListener("click", function(){
+        s.riskMode = d.getAttribute("data-mode");
+        store.save();
+        renderRisk();
+      });
+    });
+
+    u.el("set-risk-input").addEventListener("input", function(){
+      s.risk[s.riskMode] = u.num(this.value);
+      store.save();
+      renderRiskNote();
+    });
+
+    u.el("set-capital").addEventListener("input", function(){
+      s.capital = u.num(this.value);
+      store.save();
+      renderRiskNote();
+    });
 
     u.el("tgl-div").addEventListener("click", function(){
       s.divisorOn = !s.divisorOn;
@@ -203,11 +291,6 @@
         store.save();
         renderOptions();
       });
-    });
-
-    u.el("set-capital").addEventListener("input", function(){
-      s.capital = u.num(this.value);
-      store.save();
     });
 
     u.el("add-ast").addEventListener("click", function(){

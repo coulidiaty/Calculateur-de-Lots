@@ -6,7 +6,6 @@
   "use strict";
 
   var LOT_MIN = 0.01;
-  var TOLERANCE = 0.01; // écart signalé au-delà de 1 %
 
   function round2(n){ return Math.round(n * 100) / 100; }
 
@@ -26,14 +25,10 @@
     var atMin = false;
     if (lot < LOT_MIN){ lot = LOT_MIN; atMin = true; }
 
-    var real = lot * perLot;
     return {
       lot: lot,
-      real: real,
-      target: p.target,
-      rounded: Math.abs(real - p.target) / p.target > TOLERANCE,
+      real: lot * perLot,
       atMin: atMin,
-      commission: (p.commission || 0) * lot,
       divided: p.divisor > 0 ? round2(lot / p.divisor) : null
     };
   }

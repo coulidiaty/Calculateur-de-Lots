@@ -1,4 +1,5 @@
-/* Écran 1 : choix de l'actif. */
+/* Écran 1 : choix de l'actif. Mène au risque, ou directement au stop
+   quand le risque est fixe. */
 (function(App){
   "use strict";
 
@@ -8,7 +9,7 @@
   var html =
     '<section class="screen" id="s-asset">' +
       '<div class="topbar">' +
-        '<span class="step">Étape 1 / 3</span>' +
+        '<span class="step" id="asset-step"></span>' +
         '<button class="icon-btn" id="go-settings" aria-label="Paramètres" style="margin-left:auto;">' + App.ui.icons.settings + '</button>' +
       '</div>' +
       '<div class="head"><h1>Actif</h1></div>' +
@@ -20,6 +21,7 @@
 
   function render(){
     var state = store.state;
+    u.el("asset-step").textContent = "Étape 1 / " + App.risque.steps();
     var g = u.el("asset-grid");
     g.innerHTML = "";
     u.el("asset-empty").style.display = state.assets.length ? "none" : "block";
@@ -28,7 +30,7 @@
       c.addEventListener("click", function(){
         state.assetId = a.id;
         store.save();
-        App.nav.go("s-risk");
+        App.nav.go(App.risque.skipped() ? "s-stop" : "s-risk");
       });
       g.appendChild(c);
     });

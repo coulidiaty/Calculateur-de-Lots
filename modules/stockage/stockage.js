@@ -16,6 +16,7 @@
     divisorOn: false,
     divisor: 2,
     commissionsOn: false,
+    riskFixed: false,
     riskMode: "dollar",
     risk: { dollar:null, percent:null },
     memory: { dollar:[], percent:[] },
@@ -86,6 +87,7 @@
     s.capital = numOrNull(s.capital);
     s.divisorOn = !!s.divisorOn;
     s.commissionsOn = !!s.commissionsOn;
+    s.riskFixed = !!s.riskFixed;
     if (!(s.divisor > 0)) s.divisor = 2;
     if (s.riskMode !== "percent") s.riskMode = "dollar";
     if (!s.risk || typeof s.risk !== "object") s.risk = { dollar:null, percent:null };
