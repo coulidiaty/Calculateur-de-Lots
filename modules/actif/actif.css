@@ -1,0 +1,13 @@
+/* Écran 1 : choix de l'actif. */
+
+.asset-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.asset-card{
+  background: var(--surface);
+  border:1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding:20px 16px; min-height:76px;
+  display:flex; align-items:center;
+  font-size:17px; font-weight:600;
+  cursor:pointer;
+}
+.asset-card:active{ border-color: var(--accent); color: var(--accent); }
