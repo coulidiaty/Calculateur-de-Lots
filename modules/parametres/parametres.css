@@ -1,0 +1,52 @@
+/* Écran Paramètres : risque fixe, compte, options, actifs. */
+
+.sect{ margin-bottom:28px; }
+.sect-title{
+  font-size:12px; font-weight:600; color: var(--text-secondary);
+  text-transform:uppercase; letter-spacing:.04em; margin-bottom:12px;
+}
+
+.subopt{ display:none; margin:0 0 8px; align-items:center; gap:8px; }
+.subopt.show{ display:flex; }
+.subopt input{ width:80px; min-height:44px; text-align:center; }
+.subopt .chip{ min-height:44px; padding:0 16px; display:flex; align-items:center; }
+.subopt .chip.on{ background: var(--accent); border-color: var(--accent); color:#fff; }
+
+.card{
+  background: var(--surface); border:1px solid var(--border);
+  border-radius: var(--radius-card); padding:12px; margin-bottom:8px;
+}
+.row{ display:flex; align-items:center; gap:8px; }
+.row input{ min-height:42px; font-size:14px; padding:0 12px; }
+.row .sym{ flex:1; min-width:0; text-transform:uppercase; font-weight:600; }
+
+.mini{
+  width:36px; height:36px; flex-shrink:0;
+  border:none; background:none; color: var(--text-secondary);
+  border-radius: var(--radius-input); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px;
+}
+.mini:active{ background: var(--border); color: var(--text-primary); }
+.mini.del:active{ background: var(--error-bg); color: var(--error); }
+
+.vrow{
+  display:flex; gap:8px;
+  padding-top:10px; margin-top:10px;
+  border-top:1px solid var(--border);
+}
+.money{ flex:1; min-width:0; display:block; }
+.money-lab{ display:block; font-size:12px; color: var(--text-secondary); margin-bottom:6px; }
+.money input{ min-height:42px; font-size:14px; padding:0 10px 0 24px; }
+.money .fix{ left:10px; font-size:13px; }
+
+.risk-sub{ display:none; margin:0 0 8px; }
+.risk-sub.show{ display:block; }
+.risk-sub .switch{ margin-bottom:8px; }
+.sect-note{ margin:-4px 0 12px; }
+
+.add{
+  background:none; border:none; color: var(--accent);
+  font-size:14px; font-weight:500; font-family:inherit;
+  padding:6px 0; cursor:pointer;
+}
